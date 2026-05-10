@@ -78,28 +78,41 @@
   --font-mono: 'Share Tech Mono', monospace;
 }
 
-/* Light theme */
-[data-theme="light"] {
-  --bg-0: #f3f8ff;
-  --bg-1: #e8f2ff;
-  --bg-2: #dbeaff;
-  --surface: rgba(255,255,255,.78);
-  --surface-strong: rgba(255,255,255,.94);
-  --surface-hi: rgba(0,40,90,.04);
-  --hairline: rgba(20,80,140,.16);
-  --hairline-strong: rgba(20,80,140,.30);
-  --fg-1: #0a1d33;
-  --fg-2: #2a466a;
-  --fg-3: #4f6e90;
-  --fg-mute: #7d96b3;
-  --electric: #0072c6;
-  --electric-2: #0098ff;
-  --cyan: #00a896;
-  --blue-deep: #0a3a82;
-  --shadow-card: 0 1px 0 rgba(255,255,255,.7) inset, 0 18px 40px -22px rgba(10,40,80,.25);
-  --glow-soft: 0 0 18px rgba(0,114,198,.14);
+/* ============================================================
+   DARK MODE TEXT READABILITY — neon/cyan headings → deep dark blue
+   Cyan accents preserved only for highlights, buttons, borders.
+   ============================================================ */
+:root .hero-title .glow,
+body .hero-title .glow {
+  background: linear-gradient(180deg, #1565d8 0%, #0a3a82 110%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
 }
-
+body .section-title span {
+  background: linear-gradient(135deg, #1a7fe8 0%, #0d52b8 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+body .section-tag {
+  color: #4a9eff;
+}
+body .metric-value {
+  color: #eaf6ff;
+}
+body .impact-number {
+  color: #d0e8ff;
+}
+body .impact-suffix {
+  color: #4a9eff;
+}
+body .ai-feature-title {
+  color: #d0e8ff;
+}
+body .stat-value {
+  color: #d0e8ff;
+}
+body .config-price {
+  color: #d0e8ff;
+}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
@@ -126,7 +139,6 @@ a { color: var(--electric); text-decoration: none; }
   *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
   html { scroll-behavior: auto; }
 }
-
 /* Cursor (desktop only) */
 .cursor {
   position: fixed; width: 28px; height: 28px;
@@ -242,9 +254,7 @@ nav#main-nav {
   position: fixed; inset:0; z-index: 1;
   pointer-events: none;
   opacity: .55;
-}
-[data-theme="light"] #water-fx { opacity: .35; }
-#hero-veil {
+}#hero-veil {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
   background:
     radial-gradient(ellipse at 50% 35%, transparent 0%, color-mix(in srgb, var(--bg-0) 55%, transparent) 60%, var(--bg-0) 100%);
@@ -888,20 +898,244 @@ section { padding: clamp(4rem, 9vw, 7rem) 0; }
 @keyframes progShine { from { transform: translateX(-100%);} to { transform: translateX(100%);} }
 
 /* ============================================================
-   CONFIGURATOR
+   3D CONFIGURATOR CANVAS SECTION — see new layout section below
+   ============================================================ */
+
+/* Top info strip overlaid on 3D canvas */
+.cfg-3d-hud {
+  position: absolute; top: 1.2rem; left: 1.2rem; right: 1.2rem;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  pointer-events: none; z-index: 5;
+  gap: .8rem;
+}
+.cfg-3d-badge {
+  padding: .4rem .85rem;
+  background: rgba(3,16,31,.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  letter-spacing: .22em;
+  color: var(--electric);
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: .45rem;
+}
+.cfg-3d-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation: dotPulse 1.6s infinite; }
+.cfg-3d-kpi-row {
+  display: flex; gap: .5rem; flex-wrap: wrap; justify-content: flex-end;
+}
+.cfg-3d-kpi {
+  padding: .35rem .75rem;
+  background: rgba(3,16,31,.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  letter-spacing: .14em;
+  color: var(--fg-2);
+  text-align: center;
+}
+.cfg-3d-kpi .kv { color: var(--electric); font-weight: 700; font-size: .75rem; display: block; margin-bottom: .1rem; }
+
+/* Bottom control hints */
+.cfg-3d-hint {
+  position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: .6rem; letter-spacing: .2em;
+  color: var(--fg-mute); text-transform: uppercase;
+  pointer-events: none; z-index: 5;
+  display: flex; align-items: center; gap: .5rem;
+  opacity: .8;
+}
+.cfg-3d-hint::before { content: '⟳'; color: var(--electric); font-size: .85rem; animation: spinSlow 3s linear infinite; }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+
+/* Enhanced config options with extra metric */
+.cfg-extra-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .7rem;
+  padding: 1.2rem;
+  background: color-mix(in srgb, var(--electric) 5%, var(--surface));
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  margin-top: 1rem;
+}
+.cfg-extra-row {
+  display: flex; align-items: center; gap: .7rem;
+  font-family: var(--font-mono); font-size: .7rem;
+}
+.cfg-extra-icon { font-size: 1.3rem; }
+.cfg-extra-label { color: var(--fg-3); font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; display: block; }
+.cfg-extra-val { color: var(--fg-1); font-weight: 600; font-size: .82rem; }
+
+/* Energy savings gauge in summary */
+.cfg-gauge-wrap { margin: 1rem 0; }
+.cfg-gauge-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .62rem; color: var(--fg-3); letter-spacing: .15em; margin-bottom: .4rem; }
+.cfg-gauge-bar { height: 8px; background: var(--surface-hi); border-radius: 999px; overflow: hidden; }
+.cfg-gauge-fill { height: 100%; border-radius: 999px; background: var(--grad-cyan); box-shadow: 0 0 10px rgba(56,225,255,.4); transition: width .8s var(--ease); }
+
+/* ============================================================
+   CONFIGURATOR — UPGRADED SIDE-BY-SIDE LAYOUT
+   Left 62%: 3D model + price breakdown | Right 38%: config options
    ============================================================ */
 #configurator { position: relative; overflow: hidden; }
+
+/* Main outer wrapper: two columns */
 .config-wrap {
   display: grid;
-  grid-template-columns: 1.15fr .85fr;
+  grid-template-columns: 1fr 420px;
   gap: 1.5rem;
-  max-width: 1240px;
+  max-width: 1340px;
   margin: 0 auto;
   padding: 0 clamp(1rem, 4vw, 2rem);
   align-items: start;
 }
-.config-panel { padding: 1.8rem; }
-.config-group { margin-bottom: 1.6rem; }
+
+/* Left column: 3D canvas + breakdown below */
+.config-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+/* 3D Canvas stage — now taller, no max-width */
+.cfg-3d-canvas-wrap {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.cfg-3d-stage {
+  position: relative;
+  background: linear-gradient(135deg, #020f1e 0%, #04162a 60%, #061a30 100%);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  height: clamp(380px, 52vw, 540px);
+  box-shadow: var(--shadow-card), 0 0 60px -20px rgba(56,225,255,.15) inset;
+}
+.cfg-3d-stage::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(56,225,255,.07), transparent 60%);
+  pointer-events: none; z-index: 1;
+}
+#cfg-3d-canvas { width: 100%; height: 100%; display: block; position: relative; z-index: 2; }
+
+/* Price Breakdown card — below 3D canvas */
+.cfg-price-breakdown {
+  background: var(--surface);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: 1.6rem 1.8rem;
+  box-shadow: var(--shadow-card);
+  position: relative; overflow: hidden;
+}
+.cfg-price-breakdown::before {
+  content:''; position:absolute; top:0; left:1.8rem; right:1.8rem; height:1px;
+  background: linear-gradient(90deg, transparent, var(--electric), transparent);
+  opacity: .5;
+}
+.cfg-breakdown-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 1rem;
+}
+.cfg-breakdown-title {
+  font-family: var(--font-mono);
+  font-size: .62rem; letter-spacing: .3em;
+  color: var(--fg-3); text-transform: uppercase;
+}
+.config-price {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 800;
+  color: var(--fg-1);
+  line-height: 1;
+  letter-spacing: .02em;
+}
+.config-price small { font-family: var(--font-mono); font-size: .75rem; color: var(--fg-3); letter-spacing: .15em; }
+
+/* 2-column grid for breakdown lines */
+.cfg-lines-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2rem;
+  border-top: 1px solid var(--hairline);
+  margin-top: .8rem;
+  padding-top: .8rem;
+}
+.config-line {
+  display: flex; justify-content: space-between;
+  padding: .45rem 0;
+  border-bottom: 1px dashed var(--hairline);
+  font-family: var(--font-mono); font-size: .68rem; color: var(--fg-2);
+}
+.config-line span:first-child { color: var(--fg-3); letter-spacing: .1em; text-transform: uppercase; font-size:.62rem; }
+.config-line.total-line {
+  border-bottom: none; border-top: 1px solid var(--hairline-strong);
+  padding-top: .6rem; margin-top: .2rem;
+  grid-column: span 2;
+}
+.config-line.total-line span:first-child { color: var(--fg-2); font-size:.7rem; }
+.config-line.total-line span:last-child { color: var(--electric); font-size:.85rem; font-weight: 700; }
+
+/* Monthly estimate note */
+.cfg-monthly-note {
+  font-family: var(--font-mono); font-size: .6rem;
+  color: var(--fg-mute); letter-spacing: .12em;
+  margin-top: .5rem; padding-top: .5rem;
+  border-top: 1px dashed var(--hairline);
+}
+
+/* Impact metrics row (CO2, households, energy) */
+.cfg-impact-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hairline);
+}
+.cfg-impact-item {
+  text-align: center;
+  background: var(--surface-hi);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  padding: .65rem .5rem;
+}
+.cfg-impact-icon { font-size: 1.1rem; display: block; margin-bottom: .2rem; }
+.cfg-impact-val {
+  font-family: var(--font-display);
+  font-size: .95rem; font-weight: 700;
+  color: var(--fg-1); line-height: 1;
+}
+.cfg-impact-label {
+  font-family: var(--font-mono);
+  font-size: .55rem; letter-spacing: .15em;
+  color: var(--fg-3); text-transform: uppercase;
+  margin-top: .25rem; display: block;
+}
+
+/* Action buttons below breakdown */
+.config-actions { display:flex; gap: .7rem; margin-top: 1rem; flex-wrap: wrap; }
+.config-actions .btn { flex: 1; min-width: 0; }
+
+/* Right column: Config panel (options) */
+.config-panel {
+  padding: 1.8rem;
+  position: sticky; top: 90px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+}
+/* Thin scrollbar on config panel */
+.config-panel::-webkit-scrollbar { width: 4px; }
+.config-panel::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 2px; }
+
+.config-group { margin-bottom: 1.5rem; }
 .config-label {
   display:flex; justify-content: space-between; align-items: baseline;
   font-family: var(--font-mono);
@@ -909,20 +1143,38 @@ section { padding: clamp(4rem, 9vw, 7rem) 0; }
   color: var(--fg-3); text-transform: uppercase;
   margin-bottom: .65rem;
 }
-.config-label b { font-family: var(--font-display); color: var(--electric); font-size: .95rem; letter-spacing: .04em; }
+.config-label b { font-family: var(--font-display); color: var(--electric); font-size: .9rem; letter-spacing: .04em; }
 .config-options {
-  display: grid; gap: .55rem;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  display: grid; gap: .5rem;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
 }
+/* Addon cards - toggle style */
+[data-group="addons"] .config-opt {
+  text-align: left;
+  padding: .8rem .75rem;
+  border-left: 3px solid var(--hairline);
+  transition: all var(--dur) var(--ease);
+}
+[data-group="addons"] .config-opt.selected {
+  border-left-color: var(--electric);
+}
+[data-group="addons"] .config-opt::after {
+  content: '○';
+  position: absolute; top: .6rem; right: .7rem;
+  font-size: .8rem; color: var(--fg-mute);
+  transition: all var(--dur);
+}
+[data-group="addons"] .config-opt.selected::after { content: '●'; color: var(--electric); }
+
 .config-opt {
   appearance: none;
   border: 1px solid var(--hairline);
   background: var(--surface);
   color: var(--fg-2);
-  padding: .85rem .6rem;
+  padding: .75rem .55rem;
   border-radius: var(--r-sm);
   font-family: var(--font-mono);
-  font-size: .7rem; letter-spacing: .1em;
+  font-size: .66rem; letter-spacing: .1em;
   cursor: pointer;
   transition: all var(--dur) var(--ease);
   text-align: center;
@@ -935,7 +1187,7 @@ section { padding: clamp(4rem, 9vw, 7rem) 0; }
   background: color-mix(in srgb, var(--electric) 10%, var(--surface));
   box-shadow: var(--glow-soft);
 }
-.config-opt small { display:block; color: var(--fg-mute); font-size:.6rem; margin-top:.25rem; }
+.config-opt small { display:block; color: var(--fg-mute); font-size:.58rem; margin-top:.2rem; letter-spacing: .08em; }
 
 .config-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: var(--surface-hi); border-radius: 2px; outline: none; }
 .config-slider::-webkit-slider-thumb {
@@ -947,23 +1199,14 @@ section { padding: clamp(4rem, 9vw, 7rem) 0; }
 }
 .config-slider::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background: var(--electric); border:none; cursor:pointer; }
 
-.config-summary {
-  padding: 1.8rem; position: sticky; top: 90px;
-}
-.config-price {
-  font-family: var(--font-display);
-  font-size: clamp(2.4rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: var(--fg-1);
-  line-height: 1;
-  margin: .25rem 0;
-  letter-spacing: .02em;
-}
-.config-price small { font-family: var(--font-mono); font-size: .8rem; color: var(--fg-3); letter-spacing: .15em; }
-.config-line { display: flex; justify-content: space-between; padding: .55rem 0; border-bottom: 1px dashed var(--hairline); font-family: var(--font-mono); font-size: .72rem; color: var(--fg-2); }
-.config-line span:first-child { color: var(--fg-3); letter-spacing: .12em; text-transform: uppercase; font-size:.65rem; }
-.config-line:last-child { border-bottom: none; }
-.config-actions { display:flex; flex-direction: column; gap: .6rem; margin-top: 1.2rem; }
+/* Energy gauge in right panel */
+.cfg-gauge-wrap { margin: .8rem 0 0; }
+.cfg-gauge-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .62rem; color: var(--fg-3); letter-spacing: .15em; margin-bottom: .4rem; }
+.cfg-gauge-bar { height: 7px; background: var(--surface-hi); border-radius: 999px; overflow: hidden; }
+.cfg-gauge-fill { height: 100%; border-radius: 999px; background: var(--grad-cyan); box-shadow: 0 0 10px rgba(56,225,255,.4); transition: width .8s var(--ease); }
+
+/* Remove old summary panel — now replaced by .cfg-price-breakdown */
+.config-summary { display: none !important; }
 
 /* ============================================================
    BEFORE / AFTER COMPARE
@@ -1275,8 +1518,14 @@ footer {
 @media (max-width: 1100px) {
   .dash-card { grid-column: span 6; }
   .dash-card.wide { grid-column: span 12; }
-  .config-wrap, #compare .compare-wrap, #contact .contact-wrap { grid-template-columns: 1fr; }
-  .config-summary { position: static; }
+  .config-wrap { grid-template-columns: 1fr; }
+  .config-panel { position: static; max-height: none; overflow-y: visible; }
+  #compare .compare-wrap, #contact .contact-wrap { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .cfg-lines-grid { grid-template-columns: 1fr; gap: 0; }
+  .config-line.total-line { grid-column: span 1; }
+  .cfg-impact-row { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 820px) {
   nav#main-nav { padding: .8rem 1rem; }
@@ -1551,7 +1800,6 @@ footer {
 #brochure-print { display: none; }
 </style>
 <meta name="theme-color" content="#03101f" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f3f8ff" media="(prefers-color-scheme: light)">
 <meta name="description" content="HydroNova — AI-driven smart water treatment systems. Configure your unit, see live impact, and bring WHO-grade clean water anywhere.">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22HydroNova%22%2C%22short_name%22%3A%22HydroNova%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2303101f%22%2C%22theme_color%22%3A%2238e1ff%22%2C%22icons%22%3A%5B%5D%7D">
 </head>
@@ -1604,7 +1852,6 @@ footer {
   </ul>
   <div class="nav-actions">
     <button class="icon-btn nav-burger" aria-label="Menu" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
-    <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">◐</button>
     <button class="icon-btn" onclick="downloadBrochure()" aria-label="Download brochure" title="Download PDF brochure">⬇</button>
     <button class="nav-cta" onclick="scrollToId('contact')">Get Quote</button>
   </div>
@@ -1980,9 +2227,83 @@ footer {
   <div class="section-header">
     <span class="section-tag">Interactive Configurator</span>
     <h2 class="section-title">Build Your <span>HydroNova</span> Unit</h2>
-    <p class="section-desc">Pick a capacity, energy source, and modules — pricing and footprint update in real time.</p>
+    <p class="section-desc">Configure every aspect of your unit — the 3D model updates in real time. Drag to rotate, scroll to zoom.</p>
   </div>
+
   <div class="config-wrap">
+    <!-- LEFT COLUMN: 3D Model + Price Breakdown -->
+    <div class="config-left-col">
+      <!-- 3D Preview Canvas -->
+      <div class="cfg-3d-canvas-wrap">
+        <div class="cfg-3d-stage">
+          <canvas id="cfg-3d-canvas"></canvas>
+          <div class="cfg-3d-hud">
+            <div class="cfg-3d-badge"><span class="dot"></span>Live 3D Preview</div>
+            <div class="cfg-3d-kpi-row">
+              <div class="cfg-3d-kpi"><span class="kv" id="hud-output">50K L/d</span>Daily Output</div>
+              <div class="cfg-3d-kpi"><span class="kv" id="hud-households">5,000</span>Households</div>
+              <div class="cfg-3d-kpi"><span class="kv" id="hud-co2">2.4t</span>CO₂ Saved/yr</div>
+              <div class="cfg-3d-kpi"><span class="kv" id="hud-energy">72%</span>Energy Saving</div>
+            </div>
+          </div>
+          <div class="cfg-3d-hint">Drag to rotate · Scroll to zoom</div>
+        </div>
+      </div>
+
+      <!-- Real-time Price Breakdown Card -->
+      <div class="cfg-price-breakdown glass">
+        <div class="cfg-breakdown-header">
+          <span class="cfg-breakdown-title">// Real-Time Price Breakdown</span>
+          <div class="config-price">$<span id="cfg-price">87,500</span> <small>USD</small></div>
+        </div>
+        <div class="cfg-monthly-note">≈ $<span id="cfg-monthly">1,219</span>/mo · 6 yr · 0% APR</div>
+
+        <div class="cfg-lines-grid">
+          <div class="config-line"><span>Base Unit</span><span id="cfg-line-base">$45,000</span></div>
+          <div class="config-line"><span>Capacity Tier</span><span id="cfg-line-cap">$0</span></div>
+          <div class="config-line"><span>Energy Source</span><span id="cfg-line-energy">$18,000</span></div>
+          <div class="config-line"><span>AI Tier</span><span id="cfg-line-ai">$9,500</span></div>
+          <div class="config-line"><span>Add-ons</span><span id="cfg-line-addons">$0</span></div>
+          <div class="config-line"><span>Region Logistics</span><span id="cfg-line-region">$0</span></div>
+          <div class="config-line total-line"><span>Total Investment</span><span>$<span id="cfg-price-2">87,500</span> USD</span></div>
+        </div>
+
+        <div class="cfg-impact-row">
+          <div class="cfg-impact-item">
+            <span class="cfg-impact-icon">💧</span>
+            <div class="cfg-impact-val">$<span id="cfg-cost-l">0.12</span></div>
+            <span class="cfg-impact-label">per 1000 L</span>
+          </div>
+          <div class="cfg-impact-item">
+            <span class="cfg-impact-icon">🏘️</span>
+            <div class="cfg-impact-val"><span id="cfg-households">5,000</span></div>
+            <span class="cfg-impact-label">Households Served</span>
+          </div>
+          <div class="cfg-impact-item">
+            <span class="cfg-impact-icon">🌱</span>
+            <div class="cfg-impact-val"><span id="cfg-co2">2.4</span>t</div>
+            <span class="cfg-impact-label">CO₂ Avoided / yr</span>
+          </div>
+        </div>
+
+        <!-- Energy savings gauge -->
+        <div class="cfg-gauge-wrap" style="margin-top:1rem;">
+          <div class="cfg-gauge-label"><span>Energy Efficiency</span><span id="cfg-energy-pct-label">72%</span></div>
+          <div class="cfg-gauge-bar"><div class="cfg-gauge-fill" id="cfg-energy-gauge" style="width:72%"></div></div>
+        </div>
+        <div style="display:flex;gap:.5rem;justify-content:space-between;font-family:var(--font-mono);font-size:.62rem;color:var(--fg-mute);margin-top:.4rem;letter-spacing:.12em;">
+          <span>Energy Savings: <span style="color:var(--cyan)" id="cfg-energy-saving">72</span>%</span>
+          <span>Daily Output: <span style="color:var(--electric)" id="cfg-daily-output">50,000</span> L</span>
+        </div>
+
+        <div class="config-actions" style="margin-top:1.2rem;">
+          <button class="btn btn-primary" onclick="scrollToId('contact')">Request Quote →</button>
+          <button class="btn btn-ghost" onclick="downloadBrochure()">⬇ Spec Sheet (PDF)</button>
+        </div>
+      </div>
+    </div><!-- end .config-left-col -->
+
+    <!-- RIGHT COLUMN: Config Options Panel -->
     <div class="glass config-panel">
       <div class="config-group">
         <div class="config-label"><span>Daily Output</span><b><span id="cfg-cap-display">50,000</span> L/day</b></div>
@@ -2029,29 +2350,14 @@ footer {
           <button class="config-opt" data-val="africa" data-cost="2500">Africa<small>+ Field Team</small></button>
         </div>
       </div>
-    </div>
 
-    <div class="glass config-summary">
-      <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.28em;color:var(--fg-3);text-transform:uppercase;">Estimated Investment</div>
-      <div class="config-price">$<span id="cfg-price">87,500</span> <small>USD</small></div>
-      <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--fg-mute);letter-spacing:.15em;margin-bottom:1rem;">≈ $<span id="cfg-monthly">1,219</span>/mo · 6 yr · 0% APR</div>
-
-      <div class="config-line"><span>Base Unit</span><span id="cfg-line-base">$45,000</span></div>
-      <div class="config-line"><span>Capacity Tier</span><span id="cfg-line-cap">$0</span></div>
-      <div class="config-line"><span>Energy</span><span id="cfg-line-energy">$18,000</span></div>
-      <div class="config-line"><span>AI Tier</span><span id="cfg-line-ai">$9,500</span></div>
-      <div class="config-line"><span>Add-ons</span><span id="cfg-line-addons">$0</span></div>
-      <div class="config-line"><span>Region</span><span id="cfg-line-region">$0</span></div>
-      <div class="config-line"><span>Cost / 1000 L</span><span style="color:var(--electric)">$<span id="cfg-cost-l">0.12</span></span></div>
-      <div class="config-line"><span>Households Served</span><span style="color:var(--electric)"><span id="cfg-households">5,000</span></span></div>
-      <div class="config-line"><span>CO₂ Avoided / yr</span><span style="color:var(--safe)"><span id="cfg-co2">2.4</span> t</span></div>
-
-      <div class="config-actions">
-        <button class="btn btn-primary" onclick="scrollToId('contact')">Request Quote →</button>
-        <button class="btn btn-ghost" onclick="downloadBrochure()">⬇ Spec Sheet (PDF)</button>
+      <!-- Energy savings gauge in panel too -->
+      <div class="cfg-gauge-wrap">
+        <div class="cfg-gauge-label"><span>Energy Efficiency</span><span>72%</span></div>
+        <div class="cfg-gauge-bar"><div class="cfg-gauge-fill" style="width:72%" id="cfg-energy-gauge-panel"></div></div>
       </div>
-    </div>
-  </div>
+    </div><!-- end .config-panel -->
+  </div><!-- end .config-wrap -->
 </section>
 
 <!-- ============ BEFORE / AFTER COMPARE ============ -->
@@ -2350,6 +2656,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initHeroCanvas();
   initProcessCanvas();
+  initConfiguratorCanvas();
   initDashboard();
   initMapCanvas();
   initScrollReveal();
@@ -2575,35 +2882,158 @@ function makeMaterial(color, opacity=0.9, emissive=0.35) {
 
 function buildStageIntake() {
   const g = new THREE.Group();
-  // Lake / reservoir base
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.5, 0.4, 32),
-    new THREE.MeshPhongMaterial({ color: 0x002244, transparent:true, opacity:0.85 }));
-  base.position.y = -1.2; g.add(base);
-  // Water surface
-  const water = new THREE.Mesh(new THREE.CylinderGeometry(3.0, 3.0, 0.15, 32),
-    new THREE.MeshPhongMaterial({ color: 0x0088cc, transparent:true, opacity:0.55, emissive:0x0088cc, emissiveIntensity:0.4 }));
-  water.position.y = -1.0; g.add(water);
-  // Intake pipe entering water
-  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 3.5, 16),
-    makeMaterial(0x444444, 1, 0.1));
-  pipe.position.set(1.2, 0.4, 0); pipe.rotation.z = Math.PI/2.4; g.add(pipe);
-  // Strainer mesh sphere (intake screen)
-  const strainer = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12),
-    new THREE.MeshBasicMaterial({ color: 0x00d4ff, wireframe: true }));
-  strainer.position.set(-0.6, -0.5, 0); g.add(strainer);
-  // Bubbles
+
+  // === Realistic river/lake water body ===
+  const waterBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(3.6, 4.0, 0.55, 48),
+    new THREE.MeshPhongMaterial({ color: 0x00334d, transparent: true, opacity: 0.9 })
+  );
+  waterBase.position.y = -2.0; g.add(waterBase);
+
+  // Rippling water surface (multi-layer)
+  for (let i = 0; i < 3; i++) {
+    const surf = new THREE.Mesh(
+      new THREE.CircleGeometry(3.2 - i * 0.3, 48),
+      new THREE.MeshPhongMaterial({ color: 0x0077bb, transparent: true, opacity: 0.3 - i * 0.08,
+        emissive: 0x004488, emissiveIntensity: 0.35, shininess: 180, specular: 0xaaeeff })
+    );
+    surf.rotation.x = -Math.PI / 2;
+    surf.position.y = -1.72 + i * 0.015;
+    surf.userData.phase = i * 0.7;
+    g.add(surf);
+  }
+
+  // === Intake structure ===
+  // Vertical main pipe (submersible)
+  const mainPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 4.2, 16),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 120, specular: 0x88aacc }));
+  mainPipe.position.set(0.8, 0.3, 0); g.add(mainPipe);
+
+  // Elbow joint at bottom
+  const elbow = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.28, 10, 16, Math.PI / 2),
+    new THREE.MeshPhongMaterial({ color: 0x556677, shininess: 100 }));
+  elbow.position.set(0.8, -1.8, 0); elbow.rotation.z = Math.PI / 2; g.add(elbow);
+
+  // Horizontal suction pipe
+  const suctPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 1.6, 16),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 120 }));
+  suctPipe.rotation.z = Math.PI / 2;
+  suctPipe.position.set(0.0, -2.0, 0); g.add(suctPipe);
+
+  // === Intake Screen / Strainer ===
+  // Outer barrel housing
+  const screenHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 1.2, 20, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x336688, transparent: true, opacity: 0.3, side: THREE.DoubleSide, shininess: 60 }));
+  screenHousing.position.set(-0.8, -1.9, 0); g.add(screenHousing);
+
+  // Screen mesh (wireframe sphere for visibility)
+  const screenMesh = new THREE.Mesh(new THREE.SphereGeometry(0.65, 14, 14),
+    new THREE.MeshBasicMaterial({ color: 0x00ccff, wireframe: true, transparent: true, opacity: 0.65 }));
+  screenMesh.position.set(-0.8, -1.9, 0); g.add(screenMesh);
+
+  // Screen end caps
+  [-0.6, 0.6].forEach(dy => {
+    const cap = new THREE.Mesh(new THREE.CircleGeometry(0.7, 20),
+      new THREE.MeshPhongMaterial({ color: 0x00aacc, transparent: true, opacity: 0.5 }));
+    cap.rotation.x = dy > 0 ? Math.PI / 2 : -Math.PI / 2;
+    cap.position.set(-0.8, -1.9 + dy, 0); g.add(cap);
+  });
+
+  // Strainer glow highlight
+  const screenGlow = new THREE.PointLight(0x00d4ff, 1.2, 3.5);
+  screenGlow.position.set(-0.8, -1.9, 0); g.add(screenGlow);
+
+  // === Pump housing (above water) ===
+  const pumpHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 1.1, 16),
+    new THREE.MeshPhongMaterial({ color: 0x224455, emissive: 0x002244, emissiveIntensity: 0.3, shininess: 80 }));
+  pumpHousing.position.set(0.8, 1.5, 0); g.add(pumpHousing);
+
+  // Spinning impeller visible top
+  const impeller = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.06, 6, 6),
+    new THREE.MeshBasicMaterial({ color: 0x00ffee }));
+  impeller.position.set(0.8, 2.1, 0); g.add(impeller);
+
+  // === Debris particles (floating) ===
+  const debrisColors = [0x6b4a1c, 0x4a3210, 0x553322, 0x8a6040, 0x2a1a0a];
+  const debris = [];
+  for (let i = 0; i < 22; i++) {
+    const dMesh = new THREE.Mesh(
+      new THREE.TetrahedronGeometry(0.06 + Math.random() * 0.1, 0),
+      new THREE.MeshBasicMaterial({ color: debrisColors[Math.floor(Math.random() * debrisColors.length)] })
+    );
+    const r = 0.8 + Math.random() * 2.4;
+    const ang = Math.random() * Math.PI * 2;
+    dMesh.position.set(Math.cos(ang) * r, -1.8 + Math.random() * 0.3, Math.sin(ang) * r);
+    dMesh.userData.angSpeed = (Math.random() - 0.5) * 0.012;
+    dMesh.userData.r = r; dMesh.userData.ang = ang;
+    dMesh.userData.bobPhase = Math.random() * Math.PI * 2;
+    g.add(dMesh); debris.push(dMesh);
+  }
+
+  // === Clean water bubbles rising into pipe ===
   const bubbles = [];
-  for (let i=0;i<14;i++){
-    const b = new THREE.Mesh(new THREE.SphereGeometry(0.07+Math.random()*0.08,8,8),
-      new THREE.MeshBasicMaterial({color:0x00ffee, transparent:true, opacity:0.8}));
-    b.position.set((Math.random()-0.5)*4, -1+Math.random()*0.5, (Math.random()-0.5)*4);
-    b.userData.s = 0.01+Math.random()*0.02;
+  for (let i = 0; i < 18; i++) {
+    const b = new THREE.Mesh(
+      new THREE.SphereGeometry(0.04 + Math.random() * 0.07, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0x88eeff, transparent: true, opacity: 0.7 })
+    );
+    const bAng = Math.random() * Math.PI * 2;
+    const bR = Math.random() * 0.55;
+    b.position.set(0.8 + Math.cos(bAng) * bR, -2.2 + Math.random() * 4, Math.sin(bAng) * bR);
+    b.userData.speed = 0.018 + Math.random() * 0.025;
+    b.userData.sway = Math.random() * 0.012;
+    b.userData.phase = Math.random() * Math.PI * 2;
     g.add(b); bubbles.push(b);
   }
-  return { group:g, highlight: strainer, update:(t)=>{
-    water.material.opacity = 0.5 + Math.sin(t*2)*0.08;
-    bubbles.forEach(b=>{ b.position.y += b.userData.s; if (b.position.y>1.2) b.position.y=-1; });
-    strainer.rotation.y += 0.01;
+
+  // === Flow particles (entering screen) ===
+  const flowPts = [];
+  for (let i = 0; i < 14; i++) {
+    const fp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0x2299cc, transparent: true, opacity: 0.8 }));
+    fp.position.set(-0.8 + (Math.random() - 0.5) * 1.5, -1.9 + (Math.random() - 0.5) * 0.9, (Math.random() - 0.5) * 1.5);
+    fp.userData.phase = Math.random() * Math.PI * 2;
+    fp.userData.speed = 0.01 + Math.random() * 0.015;
+    g.add(fp); flowPts.push(fp);
+  }
+
+  return { group: g, highlight: screenMesh, update: (t) => {
+    // Animate water surface ripples
+    g.children.filter(c => c.geometry && c.geometry.type === 'CircleGeometry').forEach((surf, i) => {
+      surf.material.opacity = 0.25 + Math.sin(t * 2.2 + (surf.userData.phase || 0)) * 0.08;
+      const s = 1 + Math.sin(t * 1.8 + (surf.userData.phase || 0)) * 0.02;
+      surf.scale.set(s, s, 1);
+    });
+    // Rotate screen mesh
+    screenMesh.rotation.y += 0.008;
+    // Spin impeller
+    impeller.rotation.z += 0.12;
+    // Debris drift
+    debris.forEach(d => {
+      d.userData.ang += d.userData.angSpeed;
+      d.position.x = Math.cos(d.userData.ang) * d.userData.r;
+      d.position.z = Math.sin(d.userData.ang) * d.userData.r;
+      d.position.y = -1.8 + Math.sin(t * 1.5 + d.userData.bobPhase) * 0.06;
+      d.rotation.x += 0.03; d.rotation.y += 0.02;
+    });
+    // Bubble rise
+    bubbles.forEach(b => {
+      b.position.y += b.userData.speed;
+      b.position.x += Math.sin(t * 2 + b.userData.phase) * b.userData.sway;
+      if (b.position.y > 2.4) b.position.y = -2.4;
+    });
+    // Flow particles converge to screen
+    flowPts.forEach(fp => {
+      const toScreen = new THREE.Vector3(-0.8, -1.9, 0).sub(fp.position);
+      if (toScreen.length() < 0.35) {
+        const bAng = Math.random() * Math.PI * 2;
+        fp.position.set(-0.8 + Math.cos(bAng) * 1.6, -1.9 + (Math.random() - 0.5) * 0.9, Math.sin(bAng) * 1.6);
+      } else {
+        fp.position.addScaledVector(toScreen.normalize(), fp.userData.speed);
+      }
+    });
+    // Screen glow pulse
+    screenGlow.intensity = 0.9 + Math.sin(t * 4) * 0.4;
   }};
 }
 
@@ -2690,44 +3120,137 @@ function buildStageFiltration() {
 
 function buildStageUV() {
   const g = new THREE.Group();
-  // Stainless chamber
-  const chamber = new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,3.6,24,1,true),
-    new THREE.MeshPhongMaterial({color:0x335577, transparent:true, opacity:0.25, side:THREE.DoubleSide, shininess:120}));
-  chamber.rotation.z = Math.PI/2; g.add(chamber);
-  // UV bulb (purple/violet glowing rod)
-  const bulb = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,3.4,16),
-    new THREE.MeshBasicMaterial({color:0xc080ff}));
-  bulb.rotation.z = Math.PI/2; g.add(bulb);
-  // UV glow shells
-  const glows = [];
-  for (let i=0;i<3;i++){
-    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.35+i*0.18,0.35+i*0.18,3.4,16,1,true),
-      new THREE.MeshBasicMaterial({color:0x9966ff, transparent:true, opacity:0.18-i*0.05, side:THREE.DoubleSide}));
-    s.rotation.z = Math.PI/2; g.add(s); glows.push(s);
+
+  // === Stainless UV chamber (horizontal cylinder) ===
+  // Outer housing - polished stainless
+  const housing = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.3, 1.3, 4.5, 32, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x445566, transparent: true, opacity: 0.28, side: THREE.DoubleSide, shininess: 140, specular: 0xaaccee })
+  );
+  housing.rotation.z = Math.PI / 2; g.add(housing);
+
+  // End caps
+  [-2.25, 2.25].forEach(x => {
+    const cap = new THREE.Mesh(new THREE.CircleGeometry(1.3, 24),
+      new THREE.MeshPhongMaterial({ color: 0x334455, shininess: 120, specular: 0x88aacc, transparent: true, opacity: 0.5 }));
+    cap.rotation.y = x > 0 ? 0 : Math.PI;
+    cap.position.set(x, 0, 0); g.add(cap);
+  });
+
+  // Inlet/outlet flanges
+  [-2.28, 2.28].forEach(x => {
+    const flange = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.08, 8, 24),
+      new THREE.MeshPhongMaterial({ color: 0x667788, shininess: 120 }));
+    flange.rotation.y = Math.PI / 2; flange.position.x = x; g.add(flange);
+  });
+
+  // === UV lamp (central quartz tube) ===
+  // Quartz sleeve (outer)
+  const quartzSleeve = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16, 0.16, 4.3, 16, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0xeef8ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide, shininess: 200 })
+  );
+  quartzSleeve.rotation.z = Math.PI / 2; g.add(quartzSleeve);
+
+  // UV lamp tube (the actual emitter)
+  const uvLamp = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.09, 0.09, 4.2, 16),
+    new THREE.MeshBasicMaterial({ color: 0xcc88ff })
+  );
+  uvLamp.rotation.z = Math.PI / 2; g.add(uvLamp);
+
+  // UV glow layers (concentric additive cylinders)
+  const uvGlowLayers = [];
+  for (let i = 0; i < 5; i++) {
+    const r = 0.22 + i * 0.22;
+    const glow = new THREE.Mesh(
+      new THREE.CylinderGeometry(r, r, 4.2 - i * 0.05, 20, 1, true),
+      new THREE.MeshBasicMaterial({ color: 0x9955ff, transparent: true, opacity: 0.22 - i * 0.04, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    glow.rotation.z = Math.PI / 2; g.add(glow);
+    uvGlowLayers.push(glow);
   }
-  // Light sources
-  const l1 = new THREE.PointLight(0xaa66ff, 1.5, 8); g.add(l1);
-  // Pathogens being neutralized
-  const germs = [];
-  for (let i=0;i<15;i++){
-    const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1,0),
-      new THREE.MeshBasicMaterial({color:0xff5555}));
-    m.position.set(-1.7+Math.random()*3.4, (Math.random()-0.5)*0.8, (Math.random()-0.5)*0.8);
-    m.userData.v = 0.015+Math.random()*0.01;
-    m.userData.alive = true;
-    g.add(m); germs.push(m);
+
+  // UV point lights along the lamp
+  const uvLights = [];
+  for (let i = 0; i < 4; i++) {
+    const uvL = new THREE.PointLight(0x9955ff, 1.2, 5);
+    uvL.position.set(-1.5 + i * 1.0, 0, 0); g.add(uvL);
+    uvLights.push(uvL);
   }
-  return { group:g, highlight: bulb, update:(t)=>{
-    bulb.material.color.setHSL(0.78, 1, 0.55+Math.sin(t*8)*0.15);
-    glows.forEach((s,i)=>{ s.material.opacity = (0.18-i*0.05)*(0.7+Math.sin(t*4+i)*0.3); });
-    germs.forEach(m=>{
-      m.position.x += m.userData.v;
-      m.rotation.x+=0.1; m.rotation.y+=0.08;
-      if (Math.abs(m.position.x) < 0.3 && m.userData.alive){
-        m.material.color.setHex(0x00ffaa); m.userData.alive = false;
+
+  // Caustic pattern on chamber wall (rotating discs)
+  const causticDiscs = [];
+  for (let i = 0; i < 8; i++) {
+    const ang = (i / 8) * Math.PI * 2;
+    const disc = new THREE.Mesh(
+      new THREE.CircleGeometry(0.2 + Math.random() * 0.15, 6),
+      new THREE.MeshBasicMaterial({ color: 0xcc99ff, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
+    );
+    const cx = Math.cos(ang) * 1.05, cy = Math.sin(ang) * 1.05;
+    disc.position.set(-1.5 + i * 0.5, cy, cx);
+    disc.lookAt(0, 0, 0);
+    causticDiscs.push(disc); g.add(disc);
+  }
+
+  // === Pathogen particles ===
+  const pathogens = [];
+  for (let i = 0; i < 24; i++) {
+    const ph = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.08 + Math.random() * 0.04, 0),
+      new THREE.MeshBasicMaterial({ color: 0xff4444 })
+    );
+    ph.position.set(-2.1 + Math.random() * 4.2, (Math.random() - 0.5) * 1.8, (Math.random() - 0.5) * 1.8);
+    ph.userData.speed = 0.012 + Math.random() * 0.01;
+    ph.userData.alive = true;
+    ph.userData.phase = Math.random() * Math.PI * 2;
+    g.add(ph); pathogens.push(ph);
+  }
+
+  // === Electrode connectors at ends ===
+  [-2.1, 2.1].forEach(x => {
+    const conn = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.15, 0.3, 10),
+      new THREE.MeshPhongMaterial({ color: 0xaabb99, shininess: 100, specular: 0xffffff })
+    );
+    conn.rotation.z = Math.PI / 2; conn.position.set(x, 0.92, 0);
+    g.add(conn);
+  });
+
+  // === Pipe connections ===
+  const inPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1.2, 12),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 80 }));
+  inPipe.rotation.z = Math.PI / 2; inPipe.position.set(-3.3, 0, 0); g.add(inPipe);
+  const outPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1.2, 12),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 80 }));
+  outPipe.rotation.z = Math.PI / 2; outPipe.position.set(3.3, 0, 0); g.add(outPipe);
+
+  return { group: g, highlight: uvLamp, update: (t) => {
+    // Lamp flicker
+    const flicker = 0.7 + Math.sin(t * 9) * 0.2 + Math.sin(t * 17) * 0.1;
+    uvLamp.material.color.setHSL(0.77 + Math.sin(t * 5) * 0.04, 1, 0.55 * flicker);
+    uvGlowLayers.forEach((gl, i) => { gl.material.opacity = (0.22 - i * 0.04) * flicker; });
+    uvLights.forEach(ul => { ul.intensity = 1.0 * flicker; });
+
+    // Caustic pattern animation
+    causticDiscs.forEach((disc, i) => {
+      disc.material.opacity = 0.1 + Math.sin(t * 3 + i * 0.8) * 0.08;
+    });
+
+    // Pathogens move and get neutralized by UV
+    pathogens.forEach(p => {
+      p.position.x += p.userData.speed;
+      p.rotation.x += 0.08; p.rotation.z += 0.06;
+      const distToLamp = Math.sqrt(p.position.y ** 2 + p.position.z ** 2);
+      if (distToLamp < 0.5 && p.userData.alive) {
+        p.material.color.setHex(0x00ffaa); // neutralized → green
+        p.userData.alive = false;
       }
-      if (m.position.x > 1.8){
-        m.position.x = -1.8; m.material.color.setHex(0xff5555); m.userData.alive = true;
+      if (p.position.x > 2.2) {
+        p.position.x = -2.2;
+        p.position.set(-2.1 + Math.random() * 0.4, (Math.random() - 0.5) * 1.6, (Math.random() - 0.5) * 1.6);
+        p.material.color.setHex(0xff4444);
+        p.userData.alive = true;
       }
     });
   }};
@@ -2735,53 +3258,164 @@ function buildStageUV() {
 
 function buildStageAI() {
   const g = new THREE.Group();
-  // Central CPU
-  const cpu = new THREE.Mesh(new THREE.BoxGeometry(1.3,1.3,1.3),
-    new THREE.MeshPhongMaterial({color:0x004488, emissive:0x0088ff, emissiveIntensity:0.5}));
-  g.add(cpu);
-  // Wireframe overlay
-  const wire = new THREE.Mesh(new THREE.BoxGeometry(1.4,1.4,1.4),
-    new THREE.MeshBasicMaterial({color:0x00ffee, wireframe:true}));
-  g.add(wire);
-  // Neural network nodes orbiting
-  const nodes = [];
-  const lines = [];
-  for (let i=0;i<14;i++){
-    const ang = (i/14)*Math.PI*2;
-    const r = 2.4;
-    const node = new THREE.Mesh(new THREE.SphereGeometry(0.13,12,12),
-      new THREE.MeshBasicMaterial({color:0x00ffee}));
-    node.userData.ang = ang; node.userData.r = r; node.userData.h = (Math.random()-0.5)*1.5;
-    g.add(node); nodes.push(node);
+
+  // === Central AI Processor Core ===
+  // Outer housing
+  const coreOuter = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.8),
+    new THREE.MeshPhongMaterial({ color: 0x002255, emissive: 0x001144, emissiveIntensity: 0.6, shininess: 80, specular: 0x0066aa, transparent: true, opacity: 0.7 }));
+  g.add(coreOuter);
+
+  // Inner glowing core
+  const coreInner = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 1.1),
+    new THREE.MeshBasicMaterial({ color: 0x0088ff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending }));
+  g.add(coreInner);
+
+  // CPU chip detail on top face
+  const chipBase = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.06, 1.4),
+    new THREE.MeshPhongMaterial({ color: 0x001133, shininess: 200, specular: 0x0044aa }));
+  chipBase.position.y = 0.93; g.add(chipBase);
+  for (let cx = 0; cx < 4; cx++) {
+    for (let cy = 0; cy < 4; cy++) {
+      const cell = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.04, 0.22),
+        new THREE.MeshBasicMaterial({ color: 0x0055aa, transparent: true, opacity: 0.8 }));
+      cell.position.set(-0.5 + cx * 0.33, 0.97, -0.5 + cy * 0.33); g.add(cell);
+    }
   }
-  // Connecting lines from cpu
-  const lineMat = new THREE.LineBasicMaterial({color:0x00d4ff, transparent:true, opacity:0.35});
-  nodes.forEach(n=>{
-    const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), n.position]);
-    const ln = new THREE.Line(geo, lineMat); g.add(ln); lines.push({ln, node:n});
+
+  // Wireframe overlay
+  const coreWire = new THREE.Mesh(new THREE.BoxGeometry(1.85, 1.85, 1.85),
+    new THREE.MeshBasicMaterial({ color: 0x00eeff, wireframe: true, transparent: true, opacity: 0.3 }));
+  g.add(coreWire);
+
+  // Core glow
+  const coreLight = new THREE.PointLight(0x0088ff, 3, 8);
+  coreLight.position.set(0, 0, 0); g.add(coreLight);
+
+  // === Holographic sensor ring ===
+  const sensorRingGeo = new THREE.TorusGeometry(2.8, 0.04, 8, 80);
+  const sensorRingMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
+  const sensorRing = new THREE.Mesh(sensorRingGeo, sensorRingMat);
+  g.add(sensorRing);
+
+  // Second ring (vertical)
+  const sensorRing2 = new THREE.Mesh(sensorRingGeo.clone(), sensorRingMat.clone());
+  sensorRing2.rotation.x = Math.PI / 2; g.add(sensorRing2);
+
+  // === Neural network nodes ===
+  const nodes = [];
+  const nodePositions = [];
+  const numNodes = 18;
+  for (let i = 0; i < numNodes; i++) {
+    const ang = (i / numNodes) * Math.PI * 2;
+    const tier = Math.floor(i / 6);
+    const localR = 2.2 + tier * 0.5;
+    const h = (i % 6 - 2.5) * 0.65;
+    const pos = [Math.cos(ang) * localR, h, Math.sin(ang) * localR];
+    nodePositions.push(pos);
+
+    const isActive = i % 3 === 0;
+    const nodeColor = isActive ? 0x00ffee : 0x0088cc;
+    const node = new THREE.Mesh(
+      new THREE.SphereGeometry(isActive ? 0.16 : 0.1, 10, 10),
+      new THREE.MeshBasicMaterial({ color: nodeColor })
+    );
+    node.position.set(...pos);
+    node.userData.baseColor = nodeColor;
+    node.userData.phase = Math.random() * Math.PI * 2;
+    g.add(node);
+    nodes.push(node);
+
+    // Node halo
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(isActive ? 0.32 : 0.2, 8, 8),
+      new THREE.MeshBasicMaterial({ color: nodeColor, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false }));
+    node.add(halo);
+  }
+
+  // === Connection lines ===
+  const lineMat = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending });
+  const connectedPairs = [];
+  nodes.forEach((n, i) => {
+    // Connect to CPU
+    const toCore = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), n.position]);
+    g.add(new THREE.Line(toCore, lineMat.clone()));
+    connectedPairs.push({ line: new THREE.Line(toCore, lineMat.clone()), from: new THREE.Vector3(0, 0, 0), to: n.position.clone() });
+    // Connect to neighbors
+    if (i > 0 && i % 6 !== 0) {
+      const prevPos = nodePositions[i - 1];
+      const toNeighbor = new THREE.BufferGeometry().setFromPoints([n.position, new THREE.Vector3(...prevPos)]);
+      g.add(new THREE.Line(toNeighbor, lineMat.clone()));
+    }
   });
-  // Data packets
-  const packets = nodes.map(n=>{
-    const p = new THREE.Mesh(new THREE.SphereGeometry(0.06,6,6),
-      new THREE.MeshBasicMaterial({color:0xffffff}));
-    p.userData.t = Math.random();
-    g.add(p); return p;
+
+  // === Data packets traveling to CPU ===
+  const packets = nodes.map(n => {
+    const pkt = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending, depthWrite: false }));
+    pkt.userData.t = Math.random();
+    pkt.userData.from = n.position.clone();
+    pkt.userData.toCPU = Math.random() < 0.5;
+    g.add(pkt); return pkt;
   });
-  return { group:g, highlight: cpu, update:(t)=>{
-    cpu.rotation.y += 0.01; cpu.rotation.x += 0.005;
-    wire.rotation.y -= 0.012; wire.rotation.z += 0.008;
-    cpu.material.emissiveIntensity = 0.4 + Math.sin(t*3)*0.2;
-    nodes.forEach((n,i)=>{
-      const a = n.userData.ang + t*0.4;
-      n.position.set(Math.cos(a)*n.userData.r, n.userData.h+Math.sin(t+i)*0.3, Math.sin(a)*n.userData.r);
+
+  // === Floating sensor readout panels ===
+  const panelPositions = [[-3.2, 2.0, -1.0], [3.0, 1.6, -1.0], [0, 3.0, 2.5]];
+  panelPositions.forEach(pos => {
+    const panelBg = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.75, 0.04),
+      new THREE.MeshBasicMaterial({ color: 0x001122, transparent: true, opacity: 0.7 }));
+    panelBg.position.set(...pos); panelBg.lookAt(0, 1, 0); g.add(panelBg);
+    const panelGlow = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.73, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0x0055aa, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending }));
+    panelBg.add(panelGlow);
+    const panelBorder = new THREE.Mesh(new THREE.BoxGeometry(1.44, 0.79, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.4, wireframe: true }));
+    panelBg.add(panelBorder);
+  });
+
+  return { group: g, highlight: coreOuter, update: (t) => {
+    // CPU rotation
+    coreOuter.rotation.y += 0.006; coreOuter.rotation.x += 0.003;
+    coreWire.rotation.y -= 0.009; coreWire.rotation.z += 0.005;
+    coreInner.rotation.y += 0.012;
+    coreOuter.material.emissiveIntensity = 0.5 + Math.sin(t * 3) * 0.3;
+    coreLight.intensity = 2.5 + Math.sin(t * 4) * 1.0;
+
+    // Sensor rings
+    sensorRing.rotation.y += 0.004;
+    sensorRing2.rotation.z += 0.006;
+    sensorRingMat.opacity = 0.4 + Math.sin(t * 2) * 0.15;
+
+    // Node pulses
+    nodes.forEach((n, i) => {
+      const pulse = 0.7 + Math.sin(t * 2 + n.userData.phase) * 0.35;
+      n.material.opacity = pulse;
+      if (i % 4 === Math.floor(t * 2) % 4) {
+        n.material.color.setHex(0x00ffee);
+      } else {
+        n.material.color.setHex(n.userData.baseColor);
+      }
+      const angSpeed = 0.004 + (i % 3) * 0.002;
+      const currentAng = Math.atan2(n.position.z, n.position.x) + angSpeed;
+      const r = Math.sqrt(n.position.x ** 2 + n.position.z ** 2);
+      n.position.x = Math.cos(currentAng) * r;
+      n.position.z = Math.sin(currentAng) * r;
     });
-    lines.forEach(({ln,node})=>{
-      ln.geometry.setFromPoints([new THREE.Vector3(0,0,0), node.position]);
-    });
-    packets.forEach((p,i)=>{
-      p.userData.t += 0.02;
-      const tt = (p.userData.t)%1;
-      p.position.lerpVectors(new THREE.Vector3(0,0,0), nodes[i].position, tt);
+
+    // Data packets
+    packets.forEach(pkt => {
+      pkt.userData.t = (pkt.userData.t + 0.02) % 1;
+      const tt = pkt.userData.t;
+      const origin = pkt.userData.from.clone();
+      origin.set(
+        Math.cos(Math.atan2(origin.z, origin.x) + t * 0.004 * (1 + packets.indexOf(pkt) % 3 * 0.5)) * Math.sqrt(origin.x**2 + origin.z**2),
+        origin.y,
+        Math.sin(Math.atan2(origin.z, origin.x) + t * 0.004) * Math.sqrt(origin.x**2 + origin.z**2)
+      );
+      if (pkt.userData.toCPU) {
+        pkt.position.lerpVectors(origin, new THREE.Vector3(0, 0, 0), tt);
+      } else {
+        pkt.position.lerpVectors(new THREE.Vector3(0, 0, 0), origin, tt);
+      }
+      pkt.material.opacity = Math.sin(tt * Math.PI) * 0.9;
     });
   }};
 }
@@ -2882,26 +3516,48 @@ function initProcessCanvas() {
   procRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   procRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   procRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-  procRenderer.setClearColor(0x041628, 1);
+  procRenderer.setClearColor(0x02101f, 1);
+  procRenderer.shadowMap.enabled = true;
+  procRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  procRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  procRenderer.toneMappingExposure = 1.05;
 
   procScene = new THREE.Scene();
-  procCamera = new THREE.PerspectiveCamera(55, canvas.clientWidth / canvas.clientHeight, 0.1, 500);
-  procCamera.position.set(0, 4, 12);
+  procScene.fog = new THREE.FogExp2(0x02101f, 0.028);
+  procCamera = new THREE.PerspectiveCamera(52, canvas.clientWidth / canvas.clientHeight, 0.1, 500);
+  procCamera.position.set(0, 4.5, 13);
 
-  procScene.add(new THREE.AmbientLight(0x335577, 0.7));
-  const dLight = new THREE.DirectionalLight(0x00d4ff, 1.4);
-  dLight.position.set(6, 10, 6); procScene.add(dLight);
-  const fillLight = new THREE.PointLight(0x00ffee, 1, 20); fillLight.position.set(-5,3,4); procScene.add(fillLight);
+  // Premium lighting rig
+  procScene.add(new THREE.AmbientLight(0x1a3a5c, 0.6));
+  const keyLight = new THREE.DirectionalLight(0x6fd9ff, 2.0);
+  keyLight.position.set(8, 12, 8);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(1024, 1024);
+  keyLight.shadow.bias = -0.001;
+  procScene.add(keyLight);
+  const rimLight = new THREE.DirectionalLight(0x00ffcc, 0.9);
+  rimLight.position.set(-10, -2, -8); procScene.add(rimLight);
+  const fillLight = new THREE.PointLight(0x0066ff, 1.2, 18); fillLight.position.set(-5, 3, 4); procScene.add(fillLight);
+  const cyanFill = new THREE.PointLight(0x00d4ff, 0.8, 14); cyanFill.position.set(4, 2, 6); procScene.add(cyanFill);
 
-  // Grid floor
-  const grid = new THREE.GridHelper(30, 30, 0x004477, 0x001a33);
-  grid.position.y = -3; procScene.add(grid);
+  // Grid floor with glow
+  const grid = new THREE.GridHelper(32, 32, 0x005588, 0x001a33);
+  grid.position.y = -3.2; procScene.add(grid);
+  // Ground plane
+  const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(40, 40),
+    new THREE.MeshPhongMaterial({ color: 0x020c18, shininess: 30 }));
+  groundMesh.rotation.x = -Math.PI / 2; groundMesh.position.y = -3.2;
+  groundMesh.receiveShadow = true; procScene.add(groundMesh);
+  // Ground glow disc
+  const glowDisc = new THREE.Mesh(new THREE.CircleGeometry(4, 48),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false }));
+  glowDisc.rotation.x = -Math.PI / 2; glowDisc.position.y = -3.19; procScene.add(glowDisc);
 
-  // Build all stages, only show current. Capture each stage's "highlight" mesh
-  // (the physical 3D component the leader-line label should point to).
+  // Build all stages, only show current
   stageBuilders.forEach((fn,i)=>{
     const s = fn();
     s.group.visible = (i === 0);
+    s.group.position.y = 0.5;
     procScene.add(s.group);
     stageGroups.push(s.group);
     stageUpdaters.push(s.update);
@@ -2910,18 +3566,18 @@ function initProcessCanvas() {
 
   // Mouse rotate
   let isDragging = false, prevX=0, prevY=0;
-  let rotX = 0.15, rotY = 0;
+  let rotX = 0.12, rotY = 0;
   canvas.addEventListener('mousedown', e=>{ isDragging=true; prevX=e.clientX; prevY=e.clientY; });
   window.addEventListener('mouseup', ()=> isDragging=false);
   canvas.addEventListener('mousemove', e=>{
     if(!isDragging) return;
     rotY += (e.clientX-prevX)*0.008;
-    rotX += (e.clientY-prevY)*0.008;
-    rotX = Math.max(-0.6, Math.min(1.0, rotX));
+    rotX += (e.clientY-prevY)*0.006;
+    rotX = Math.max(-0.5, Math.min(0.9, rotX));
     prevX=e.clientX; prevY=e.clientY;
   });
   canvas.addEventListener('wheel', e=>{
-    procCamera.position.z = Math.max(6, Math.min(22, procCamera.position.z + e.deltaY*0.01));
+    procCamera.position.z = Math.max(7, Math.min(22, procCamera.position.z + e.deltaY*0.01));
     e.preventDefault();
   }, {passive:false});
 
@@ -2929,26 +3585,26 @@ function initProcessCanvas() {
   function loop(){
     requestAnimationFrame(loop);
     pt += 0.016;
-    // Apply rotation to current visible stage
     const cur = stageGroups[currentStage];
     if (cur) {
       cur.rotation.x = rotX;
       cur.rotation.y += 0.003;
     }
     stageUpdaters.forEach((u,i)=>{ if (stageGroups[i].visible) u(pt); });
-    // Animate active highlight component (subtle pulsing glow)
+    // Animate active highlight with pulsing glow
     const hl = stageHighlights[currentStage];
     if (hl && hl.material) {
       const mat = hl.material;
       if ('emissive' in mat) {
-        if (!hl.userData._origEmHex) hl.userData._origEmHex = mat.emissive.getHex();
+        if (!hl.userData._origEmHex) hl.userData._origEmHex = mat.emissive ? mat.emissive.getHex() : 0x38e1ff;
         mat.emissive.setHex(0x38e1ff);
         mat.emissiveIntensity = 0.55 + Math.sin(pt*4)*0.35;
       }
     }
-    procCamera.lookAt(0,0,0);
+    // Animate ground disc
+    glowDisc.material.opacity = 0.05 + Math.sin(pt * 1.2) * 0.025;
+    procCamera.lookAt(0, 0.5, 0);
     procRenderer.render(procScene, procCamera);
-    // After render, project highlight position to 2D for leader-line label
     updateLeaderLine();
   }
   loop();
@@ -2958,6 +3614,465 @@ function initProcessCanvas() {
     procCamera.aspect = w / h; procCamera.updateProjectionMatrix();
     procRenderer.setSize(w, h);
   });
+}
+
+/* ============================================================
+   3D UNIT CONFIGURATOR CANVAS
+   A realistic, interactive 3D preview of the HydroNova container
+   unit that responds to user configuration changes in real time.
+   ============================================================ */
+function initConfiguratorCanvas() {
+  const canvas = document.getElementById('cfg-3d-canvas');
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x020f1e, 1);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+
+  function setSize() {
+    const w = canvas.clientWidth || canvas.parentElement.clientWidth;
+    const h = canvas.clientHeight || canvas.parentElement.clientHeight;
+    renderer.setSize(w, h, false);
+    cfgCamera.aspect = w / h;
+    cfgCamera.updateProjectionMatrix();
+  }
+
+  const cfgScene = new THREE.Scene();
+  cfgScene.fog = new THREE.FogExp2(0x020f1e, 0.022);
+  const cfgCamera = new THREE.PerspectiveCamera(42, 2, 0.1, 200);
+  cfgCamera.position.set(9, 5, 14);
+  cfgCamera.lookAt(0, 0, 0);
+
+  // ── Lighting ──────────────────────────────────────────────
+  cfgScene.add(new THREE.AmbientLight(0x1a3a5c, 0.8));
+  const sun = new THREE.DirectionalLight(0x9fdfff, 2.2);
+  sun.position.set(10, 18, 10);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.near = 0.5;
+  sun.shadow.camera.far = 60;
+  sun.shadow.camera.left = sun.shadow.camera.bottom = -12;
+  sun.shadow.camera.right = sun.shadow.camera.top = 12;
+  sun.shadow.bias = -0.001;
+  cfgScene.add(sun);
+  const rimLight = new THREE.DirectionalLight(0x00ffcc, 0.7);
+  rimLight.position.set(-8, 3, -8); cfgScene.add(rimLight);
+  const frontFill = new THREE.PointLight(0x0066ff, 40, 25, 2);
+  frontFill.position.set(0, 4, 10); cfgScene.add(frontFill);
+  const bottomGlow = new THREE.PointLight(0x00d4ff, 20, 10, 2);
+  bottomGlow.position.set(0, -2, 0); cfgScene.add(bottomGlow);
+
+  // ── Ground plane ──────────────────────────────────────────
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x03101f, roughness: 0.8, metalness: 0.1
+  });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -2.5;
+  ground.receiveShadow = true;
+  cfgScene.add(ground);
+
+  // Ground grid
+  const gridHelper = new THREE.GridHelper(30, 30, 0x003866, 0x001a33);
+  gridHelper.position.y = -2.49;
+  cfgScene.add(gridHelper);
+
+  // Ground glow disc
+  const discGeo = new THREE.CircleGeometry(5, 64);
+  const discMat = new THREE.MeshBasicMaterial({
+    color: 0x00d4ff, transparent: true, opacity: 0.06,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const disc = new THREE.Mesh(discGeo, discMat);
+  disc.rotation.x = -Math.PI / 2;
+  disc.position.y = -2.48;
+  cfgScene.add(disc);
+
+  // ── Container build functions ──────────────────────────────
+  const cfgGroup = new THREE.Group();
+  cfgScene.add(cfgGroup);
+
+  // Materials palette
+  const mContainer = new THREE.MeshStandardMaterial({ color: 0x0a2850, roughness: 0.65, metalness: 0.6 });
+  const mContainerTrim = new THREE.MeshStandardMaterial({ color: 0x223355, roughness: 0.5, metalness: 0.8 });
+  const mSteel = new THREE.MeshStandardMaterial({ color: 0x557799, roughness: 0.35, metalness: 0.9 });
+  const mGlass = new THREE.MeshStandardMaterial({ color: 0x44ccff, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.32 });
+  const mEmissiveCyan = new THREE.MeshStandardMaterial({ color: 0x00d4ff, emissive: 0x00d4ff, emissiveIntensity: 0.9, roughness: 0.3, metalness: 0.5 });
+  const mEmissiveGreen = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x00ff88, emissiveIntensity: 0.8, roughness: 0.4, metalness: 0.2 });
+  const mSolarPanel = new THREE.MeshStandardMaterial({ color: 0x001133, roughness: 0.2, metalness: 0.7, emissive: 0x003366, emissiveIntensity: 0.3 });
+  const mPipe = new THREE.MeshStandardMaterial({ color: 0x336688, roughness: 0.4, metalness: 0.85 });
+  const mAccent = new THREE.MeshStandardMaterial({ color: 0x38e1ff, emissive: 0x38e1ff, emissiveIntensity: 0.6, roughness: 0.2, metalness: 0.5 });
+
+  // ── Container body (20ft) ──────────────────────────────────
+  const containerW = 7.2, containerH = 2.6, containerD = 2.4;
+
+  // Main body
+  const bodyMesh = new THREE.Mesh(new THREE.BoxGeometry(containerW, containerH, containerD), mContainer);
+  bodyMesh.castShadow = true; bodyMesh.receiveShadow = true;
+  bodyMesh.position.y = containerH / 2;
+  cfgGroup.add(bodyMesh);
+
+  // Corrugated ribbing effect (vertical ribs on sides)
+  const ribCount = 14;
+  for (let i = 0; i < ribCount; i++) {
+    const x = -containerW / 2 + (i + 0.5) * (containerW / ribCount);
+    const rib = new THREE.Mesh(new THREE.BoxGeometry(0.06, containerH - 0.05, containerD + 0.05), mContainerTrim);
+    rib.position.set(x, containerH / 2, 0);
+    cfgGroup.add(rib);
+  }
+
+  // Corner posts
+  const postPositions = [
+    [-containerW/2+0.1, 0, -containerD/2+0.1],
+    [-containerW/2+0.1, 0,  containerD/2-0.1],
+    [ containerW/2-0.1, 0, -containerD/2+0.1],
+    [ containerW/2-0.1, 0,  containerD/2-0.1],
+  ];
+  postPositions.forEach(([x,,z]) => {
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.18, containerH + 0.05, 0.18), mSteel);
+    post.position.set(x, containerH / 2, z);
+    post.castShadow = true;
+    cfgGroup.add(post);
+  });
+
+  // Top frame
+  const topFrame = new THREE.Mesh(new THREE.BoxGeometry(containerW + 0.05, 0.12, containerD + 0.05), mSteel);
+  topFrame.position.y = containerH + 0.06;
+  cfgGroup.add(topFrame);
+
+  // Bottom frame / skids
+  const bottomFrame = new THREE.Mesh(new THREE.BoxGeometry(containerW + 0.1, 0.14, containerD + 0.05), mSteel);
+  bottomFrame.position.y = 0.07;
+  cfgGroup.add(bottomFrame);
+  // Skid legs
+  for (let sx of [-containerW/2 + 1, 0, containerW/2 - 1]) {
+    const skid = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.22, containerD + 0.12), mContainerTrim);
+    skid.position.set(sx, 0, 0);
+    cfgGroup.add(skid);
+  }
+
+  // Control panel (front face, right side)
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.4, 0.08), mContainerTrim);
+  panel.position.set(containerW/2 - 1.0, containerH/2 + 0.0, containerD/2 + 0.04);
+  cfgGroup.add(panel);
+  // Panel screen
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.02), mGlass);
+  screen.position.set(containerW/2 - 1.0, containerH/2 + 0.2, containerD/2 + 0.09);
+  cfgGroup.add(screen);
+  // Panel indicators (LED dots)
+  const ledColors = [0x00ff88, 0x00d4ff, 0xff8800, 0x00ff88, 0x00ff88];
+  ledColors.forEach((col, i) => {
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8),
+      new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1, roughness: 0.2, metalness: 0 }));
+    led.position.set(containerW/2 - 0.55 - i * 0.16, containerH/2 - 0.3, containerD/2 + 0.08);
+    cfgGroup.add(led);
+  });
+
+  // Intake pipe (left side)
+  const intakePipe = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.4, 12), mPipe);
+  intakePipe.rotation.x = Math.PI / 2;
+  intakePipe.position.set(-containerW/2 + 0.9, 0.8, containerD/2 + 0.7);
+  cfgGroup.add(intakePipe);
+  const intakeEnd = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.04, 8, 20), mAccent);
+  intakeEnd.rotation.x = Math.PI/2;
+  intakeEnd.position.set(-containerW/2 + 0.9, 0.8, containerD/2 + 1.42);
+  cfgGroup.add(intakeEnd);
+
+  // Outlet pipe (right side)
+  const outletPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.2, 12), mPipe);
+  outletPipe.rotation.x = Math.PI / 2;
+  outletPipe.position.set(containerW/2 - 0.8, 0.6, containerD/2 + 0.6);
+  cfgGroup.add(outletPipe);
+  // Outlet flow indicator (glowing ring)
+  const outletGlow = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.035, 8, 20), mEmissiveCyan);
+  outletGlow.rotation.x = Math.PI/2;
+  outletGlow.position.set(containerW/2 - 0.8, 0.6, containerD/2 + 1.22);
+  cfgGroup.add(outletGlow);
+
+  // Ventilation louvers (side)
+  for (let i = 0; i < 5; i++) {
+    const louver = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.06, 0.14), mContainerTrim);
+    louver.position.set(containerW/2 - 2.5, 1.0 + i * 0.22, containerD/2 + 0.07);
+    cfgGroup.add(louver);
+  }
+
+  // Embossed HydroNova label (simulated as thin raised rect)
+  const labelPlate = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.4, 0.04), mContainerTrim);
+  labelPlate.position.set(0, containerH/2 + 0.6, containerD/2 + 0.04);
+  cfgGroup.add(labelPlate);
+  const labelGlow = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.32, 0.02),
+    new THREE.MeshStandardMaterial({ color: 0x38e1ff, emissive: 0x38e1ff, emissiveIntensity: 0.5, transparent: true, opacity: 0.8 }));
+  labelGlow.position.set(0, containerH/2 + 0.6, containerD/2 + 0.062);
+  cfgGroup.add(labelGlow);
+
+  // ── SOLAR PANELS (dynamic, shown/hidden) ─────────────────
+  const solarGroup = new THREE.Group();
+  solarGroup.position.y = containerH + 0.18;
+  cfgGroup.add(solarGroup);
+
+  // Build a 2×5 array of solar panels
+  const panelW = 1.3, panelD = 0.65;
+  const solarPanelMeshes = [];
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 5; col++) {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(panelW, 0.05, panelD), mSolarPanel);
+      panel.position.set(-containerW/2 + 1.0 + col * (panelW + 0.12), 0.05, -containerD/2 + 0.5 + row * (panelD + 0.18));
+      panel.rotation.x = -0.15;  // slight tilt
+      solarGroup.add(panel);
+      solarPanelMeshes.push(panel);
+      // Panel cell lines
+      const cellMat = new THREE.MeshStandardMaterial({ color: 0x002255, roughness: 0.1, metalness: 0.9, emissive: 0x001133, emissiveIntensity: 0.2 });
+      for (let cx = 0; cx < 3; cx++) {
+        const cellLine = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.06, panelD - 0.08), cellMat);
+        cellLine.position.set(-panelW/2 + (cx + 1) * panelW/4, 0.03, 0);
+        panel.add(cellLine);
+      }
+      for (let cy = 0; cy < 2; cy++) {
+        const cellLine = new THREE.Mesh(new THREE.BoxGeometry(panelW - 0.08, 0.06, 0.01), cellMat);
+        cellLine.position.set(0, 0.03, -panelD/2 + (cy + 1) * panelD/3);
+        panel.add(cellLine);
+      }
+    }
+  }
+
+  // Solar mounting rails
+  for (let r = 0; r < 3; r++) {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(containerW - 0.4, 0.06, 0.06), mSteel);
+    rail.position.set(0, 0, -containerD/2 + 0.35 + r * 0.55);
+    solarGroup.add(rail);
+  }
+
+  // ── AI INDICATOR NODES (shown when AI tier selected) ──────
+  const aiGroup = new THREE.Group();
+  cfgGroup.add(aiGroup);
+
+  // Glowing sensor nodes around unit
+  const aiSensorPositions = [
+    [-containerW/2 - 0.3, 1.2, 0],
+    [containerW/2 + 0.3, 1.8, 0],
+    [0, containerH + 0.6, containerD/2 + 0.3],
+    [-2, 0.8, -containerD/2 - 0.2],
+    [2.5, 1.4, -containerD/2 - 0.2],
+  ];
+  const aiNodes = [];
+  aiSensorPositions.forEach(pos => {
+    const node = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), mEmissiveCyan);
+    node.position.set(...pos);
+    node.castShadow = true;
+    aiGroup.add(node);
+    // Halo
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false }));
+    node.add(halo);
+    aiNodes.push(node);
+  });
+
+  // Connecting lines between AI nodes (Three.js Line)
+  const connLineMat = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.3 });
+  const connPairs = [[0,1],[1,2],[2,3],[3,4],[4,0],[0,2]];
+  const connLines = connPairs.map(([a, b]) => {
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(...aiSensorPositions[a]),
+      new THREE.Vector3(...aiSensorPositions[b])
+    ]);
+    const line = new THREE.Line(geo, connLineMat.clone());
+    aiGroup.add(line);
+    return line;
+  });
+
+  // Data packet particles traveling along lines
+  const dataPackets = connPairs.map(([a, b]) => {
+    const pkt = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending }));
+    pkt.userData.t = Math.random();
+    pkt.userData.a = aiSensorPositions[a];
+    pkt.userData.b = aiSensorPositions[b];
+    aiGroup.add(pkt);
+    return pkt;
+  });
+
+  // ── CAPACITY INDICATOR — water tanks behind glass window ──
+  const windowMesh = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.6, 0.08), mGlass);
+  windowMesh.position.set(-1.5, containerH/2, containerD/2 + 0.04);
+  cfgGroup.add(windowMesh);
+
+  // Water tank inside (visible through window)
+  const tankInside = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 1.4, 20, 1, true),
+    new THREE.MeshStandardMaterial({ color: 0x0088cc, transparent: true, opacity: 0.35, side: THREE.DoubleSide, roughness: 0.1, metalness: 0.3, emissive: 0x0044aa, emissiveIntensity: 0.3 }));
+  tankInside.position.set(-1.5, containerH/2 + 0.05, containerD/2 - 0.4);
+  cfgGroup.add(tankInside);
+
+  // Water level inside tank
+  const waterLevel = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.8, 20),
+    new THREE.MeshStandardMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.65, roughness: 0.05, metalness: 0.1, emissive: 0x0099dd, emissiveIntensity: 0.5 }));
+  waterLevel.position.set(-1.5, containerH/2 - 0.2, containerD/2 - 0.4);
+  cfgGroup.add(waterLevel);
+
+  // ── Atmospheric particles ──────────────────────────────────
+  const particleCount = 220;
+  const pPositions = new Float32Array(particleCount * 3);
+  const pPhases = new Float32Array(particleCount);
+  for (let i = 0; i < particleCount; i++) {
+    pPositions[i*3]   = (Math.random() - 0.5) * 16;
+    pPositions[i*3+1] = Math.random() * 7 - 1;
+    pPositions[i*3+2] = (Math.random() - 0.5) * 10;
+    pPhases[i] = Math.random() * Math.PI * 2;
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+  const pMat = new THREE.PointsMaterial({
+    color: 0x38e1ff, size: 0.06, transparent: true, opacity: 0.5,
+    depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true
+  });
+  cfgScene.add(new THREE.Points(pGeo, pMat));
+
+  // ── Orbit control (mouse drag + pinch) ────────────────────
+  let isDragging = false, prevX = 0, prevY = 0;
+  let orbitTheta = 0.5, orbitPhi = 0.35, orbitRadius = 16;
+  let autoRotate = true, autoRotateTimer = null;
+  const TARGET = new THREE.Vector3(0, 1.3, 0);
+
+  function updateCamera() {
+    cfgCamera.position.x = TARGET.x + orbitRadius * Math.sin(orbitPhi) * Math.sin(orbitTheta);
+    cfgCamera.position.y = TARGET.y + orbitRadius * Math.cos(orbitPhi);
+    cfgCamera.position.z = TARGET.z + orbitRadius * Math.sin(orbitPhi) * Math.cos(orbitTheta);
+    cfgCamera.lookAt(TARGET);
+  }
+
+  canvas.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; autoRotate = false; clearTimeout(autoRotateTimer); });
+  window.addEventListener('mouseup', () => { isDragging = false; autoRotateTimer = setTimeout(() => { autoRotate = true; }, 3500); });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    orbitTheta -= (e.clientX - prevX) * 0.005;
+    orbitPhi = Math.max(0.2, Math.min(1.35, orbitPhi + (e.clientY - prevY) * 0.004));
+    prevX = e.clientX; prevY = e.clientY;
+  });
+  canvas.addEventListener('wheel', e => {
+    orbitRadius = Math.max(7, Math.min(26, orbitRadius + e.deltaY * 0.02));
+    e.preventDefault();
+  }, { passive: false });
+  // Touch support
+  let lastTouchX = 0, lastTouchY = 0, lastTouchDist = 0;
+  canvas.addEventListener('touchstart', e => {
+    isDragging = true; autoRotate = false; clearTimeout(autoRotateTimer);
+    if (e.touches.length === 1) { lastTouchX = e.touches[0].clientX; lastTouchY = e.touches[0].clientY; }
+    if (e.touches.length === 2) lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => { isDragging = false; autoRotateTimer = setTimeout(() => { autoRotate = true; }, 3000); });
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) {
+      orbitTheta -= (e.touches[0].clientX - lastTouchX) * 0.006;
+      orbitPhi = Math.max(0.2, Math.min(1.35, orbitPhi + (e.touches[0].clientY - lastTouchY) * 0.005));
+      lastTouchX = e.touches[0].clientX; lastTouchY = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      orbitRadius = Math.max(7, Math.min(26, orbitRadius + (lastTouchDist - dist) * 0.06));
+      lastTouchDist = dist;
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  // ── State update from configurator ────────────────────────
+  let cfgState = { energy: 'hybrid', ai: 'pro', capacity: 50000, addons: [] };
+
+  window.updateCfgModel = function(state) {
+    const addonsArr = state.addons instanceof Set ? [...state.addons] : (state.addons || []);
+    cfgState = { ...state, addons: addonsArr };
+    // Solar panels visibility
+    const showSolar = state.energy === 'solar' || state.energy === 'hybrid';
+    solarGroup.visible = showSolar;
+    // AI indicators
+    const showAI = state.ai !== 'standard';
+    aiGroup.visible = showAI;
+    // Scale container based on capacity tier
+    const capScale = 0.85 + (state.capacity / 500000) * 0.55;
+    bodyMesh.scale.set(capScale, 1, 1);
+    // Update water level based on capacity
+    const waterH = 0.3 + (state.capacity / 500000) * 1.2;
+    waterLevel.scale.y = waterH;
+    waterLevel.position.y = containerH/2 - 0.7 + waterH * 0.4;
+    // Color feedback on solar panels
+    if (state.energy === 'solar') {
+      solarPanelMeshes.forEach(p => { p.material.emissive.setHex(0x003388); p.material.emissiveIntensity = 0.5; });
+    } else {
+      solarPanelMeshes.forEach(p => { p.material.emissive.setHex(0x003366); p.material.emissiveIntensity = 0.3; });
+    }
+    // Container addon: shift left to visually suggest second unit
+    if (addonsArr.includes('container')) {
+      cfgGroup.position.x = -1.5;
+    } else {
+      cfgGroup.position.x = 0;
+    }
+    // Enterprise AI: brighter nodes
+    if (state.ai === 'enterprise') {
+      aiNodes.forEach(n => { if (n.material) n.material.emissiveIntensity = 1.4; });
+      mContainer.color.setHex(0x0a2d5a);
+    } else if (state.ai === 'pro') {
+      aiNodes.forEach(n => { if (n.material) n.material.emissiveIntensity = 0.9; });
+      mContainer.color.setHex(0x0a2850);
+    } else {
+      aiNodes.forEach(n => { if (n.material) n.material.emissiveIntensity = 0.5; });
+      mContainer.color.setHex(0x0a2850);
+    }
+    // Warranty addon: gold tint on label
+    labelGlow.material.color.setHex(addonsArr.includes('warranty') ? 0xffcc44 : 0x38e1ff);
+    labelGlow.material.emissive.setHex(addonsArr.includes('warranty') ? 0xffaa00 : 0x38e1ff);
+  };
+
+  // Initial state
+  updateCamera();
+  setSize();
+
+  // ── Animation loop ─────────────────────────────────────────
+  let cfgT = 0;
+  function cfgLoop() {
+    requestAnimationFrame(cfgLoop);
+    cfgT += 0.014;
+
+    // Auto-rotate
+    if (autoRotate) orbitTheta += 0.003;
+    updateCamera();
+
+    // Animate AI sensor nodes
+    aiNodes.forEach((node, i) => {
+      node.rotation.y += 0.025;
+      node.rotation.x += 0.015;
+      node.material.emissiveIntensity = 0.6 + Math.sin(cfgT * 3 + i) * 0.4;
+    });
+    // Animate data packets
+    dataPackets.forEach((pkt, i) => {
+      pkt.userData.t = (pkt.userData.t + 0.018) % 1;
+      const t = pkt.userData.t;
+      const a = new THREE.Vector3(...pkt.userData.a);
+      const b = new THREE.Vector3(...pkt.userData.b);
+      pkt.position.lerpVectors(a, b, t);
+      pkt.material.opacity = Math.sin(t * Math.PI) * 0.9;
+    });
+
+    // Pulse outlet glow
+    outletGlow.material.emissiveIntensity = 0.6 + Math.sin(cfgT * 5) * 0.4;
+
+    // Animate water level oscillation
+    waterLevel.material.emissiveIntensity = 0.4 + Math.sin(cfgT * 2) * 0.15;
+
+    // Bottom disc pulse
+    disc.material.opacity = 0.04 + Math.sin(cfgT * 0.8) * 0.02;
+
+    // Subtle panel screen flicker
+    screen.material.opacity = 0.28 + Math.sin(cfgT * 12) * 0.06;
+
+    // Label glow pulse
+    labelGlow.material.emissiveIntensity = 0.45 + Math.sin(cfgT * 2.5) * 0.25;
+
+    renderer.render(cfgScene, cfgCamera);
+  }
+  cfgLoop();
+
+  window.addEventListener('resize', setSize);
 }
 
 /* ============================================================
@@ -3754,20 +4869,7 @@ document.head.appendChild(rippleStyle);
    ============================================================ */
 function scrollToId(id){ const el = document.getElementById(id); if (el) el.scrollIntoView({behavior:'smooth', block:'start'}); }
 
-/* Theme toggle */
-(function initTheme(){
-  const saved = localStorage.getItem('hn-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#theme-toggle')) {
-      const cur = document.documentElement.getAttribute('data-theme');
-      const next = cur === 'light' ? 'dark' : 'light';
-      if (next === 'dark') document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('hn-theme', next);
-    }
-  });
-})();
+/* Theme toggle removed - dark mode only */
 
 /* Subtle background water-particle FX (very low intensity) */
 (function waterFx(){
@@ -3856,6 +4958,8 @@ document.addEventListener('mousemove', (e) => {
 
     document.getElementById('cfg-cap-display').textContent = fmt(state.capacity);
     document.getElementById('cfg-price').textContent = fmt(total);
+    const cfgPrice2 = document.getElementById('cfg-price-2');
+    if (cfgPrice2) cfgPrice2.textContent = fmt(total);
     document.getElementById('cfg-monthly').textContent = fmt(Math.round(total/72));
     document.getElementById('cfg-line-base').textContent = '$' + fmt(base);
     document.getElementById('cfg-line-cap').textContent = '$' + fmt(capCost);
@@ -3877,6 +4981,29 @@ document.addEventListener('mousemove', (e) => {
     const energyFactor = state.energy === 'solar' ? 1.6 : state.energy === 'hybrid' ? 1.0 : 0.4;
     const co2 = (litersPerYear * 0.0000048 * energyFactor).toFixed(1);
     document.getElementById('cfg-co2').textContent = co2;
+    // Daily output (formatted)
+    document.getElementById('cfg-daily-output').textContent = fmt(state.capacity);
+    // Energy saving % based on source
+    const energySaving = state.energy === 'solar' ? 94 : state.energy === 'hybrid' ? 72 : 38;
+    document.getElementById('cfg-energy-saving').textContent = energySaving;
+    // Update energy gauge
+    const gauge = document.getElementById('cfg-energy-gauge');
+    const gaugePanelEl = document.getElementById('cfg-energy-gauge-panel');
+    const gaugeLabel = document.getElementById('cfg-energy-pct-label');
+    if (gauge) gauge.style.width = energySaving + '%';
+    if (gaugePanelEl) gaugePanelEl.style.width = energySaving + '%';
+    if (gaugeLabel) gaugeLabel.textContent = energySaving + '%';
+    // Update HUD badges on 3D canvas
+    const hudOutput = document.getElementById('hud-output');
+    const hudHouseholds = document.getElementById('hud-households');
+    const hudCo2 = document.getElementById('hud-co2');
+    const hudEnergy = document.getElementById('hud-energy');
+    if (hudOutput) hudOutput.textContent = (state.capacity >= 1000 ? (state.capacity/1000).toFixed(0)+'K' : state.capacity) + ' L/d';
+    if (hudHouseholds) hudHouseholds.textContent = households >= 1000 ? (households/1000).toFixed(0)+'K+' : households;
+    if (hudCo2) hudCo2.textContent = co2 + 't';
+    if (hudEnergy) hudEnergy.textContent = energySaving + '%';
+    // Notify 3D configurator of state change
+    if (window.updateCfgModel) window.updateCfgModel(state);
   }
   recompute();
 })();
