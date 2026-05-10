@@ -1798,6 +1798,113 @@ footer {
 }
 /* Hide brochure in normal view */
 #brochure-print { display: none; }
+
+/* ============================================================
+   INSIDE VIEW MODAL — Full-pipeline cross-section viewer
+   ============================================================ */
+.inside-view-modal {
+  position: fixed; inset: 0; z-index: 99990;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(2, 10, 20, 0.96);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+}
+.inside-view-modal.open { display: flex; }
+.inside-view-inner {
+  position: relative;
+  width: min(1480px, 98vw);
+  height: min(780px, 92vh);
+  background: linear-gradient(160deg, rgba(4,18,36,0.98), rgba(2,12,26,0.98));
+  border: 1px solid rgba(56,225,255,0.22);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 80px -20px rgba(56,225,255,0.35), 0 40px 120px -40px rgba(0,0,0,0.9);
+  display: flex; flex-direction: column;
+}
+.iv-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .85rem 1.4rem;
+  border-bottom: 1px solid rgba(56,225,255,0.12);
+  flex-shrink: 0;
+  background: rgba(2,10,20,0.6);
+  z-index: 5;
+}
+.iv-title {
+  font-family: var(--font-display); font-size: .85rem;
+  letter-spacing: .3em; color: var(--electric); text-transform: uppercase;
+  display: flex; align-items: center; gap: .7rem;
+}
+.iv-title .dot { width:8px; height:8px; border-radius:50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); animation: dotPulse 1.6s infinite; }
+.iv-controls { display: flex; gap: .5rem; align-items: center; }
+.iv-btn {
+  padding: .45rem .9rem;
+  background: rgba(56,225,255,0.08); border: 1px solid rgba(56,225,255,0.22);
+  color: var(--electric); font-family: var(--font-mono); font-size: .65rem;
+  letter-spacing: .2em; text-transform: uppercase; border-radius: 999px; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.iv-btn:hover { background: rgba(56,225,255,0.18); border-color: var(--electric); }
+.iv-btn.active { background: rgba(56,225,255,0.22); border-color: var(--electric); box-shadow: 0 0 12px rgba(56,225,255,0.3); }
+.iv-close {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,100,100,0.12); border: 1px solid rgba(255,100,100,0.3);
+  color: #ff8888; font-size: 1.1rem; cursor: pointer; display:flex; align-items:center; justify-content:center;
+  transition: all .2s; flex-shrink: 0;
+}
+.iv-close:hover { background: rgba(255,100,100,0.25); color:#fff; }
+.iv-canvas-wrap {
+  flex: 1; position: relative; overflow: hidden;
+}
+#inside-view-canvas { width: 100%; height: 100%; display: block; }
+.iv-stage-bar {
+  display: flex; gap: 0; border-top: 1px solid rgba(56,225,255,0.12);
+  flex-shrink: 0; background: rgba(2,10,20,0.7);
+}
+.iv-stage-tab {
+  flex: 1; padding: .55rem .4rem; text-align: center; cursor: pointer;
+  border-right: 1px solid rgba(56,225,255,0.08);
+  transition: background .2s; position: relative;
+}
+.iv-stage-tab:last-child { border-right: none; }
+.iv-stage-tab:hover { background: rgba(56,225,255,0.06); }
+.iv-stage-tab.active { background: rgba(56,225,255,0.1); }
+.iv-stage-tab.active::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--electric);
+}
+.iv-stage-tab .ts-num {
+  font-family: var(--font-mono); font-size: .5rem; letter-spacing: .2em;
+  color: var(--electric); text-transform: uppercase; display: block; margin-bottom: .15rem;
+}
+.iv-stage-tab .ts-name {
+  font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em;
+  color: var(--fg-3); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.iv-info-overlay {
+  position: absolute; bottom: 1rem; right: 1rem; z-index: 5;
+  max-width: 300px; pointer-events: none;
+  padding: 1rem 1.2rem;
+  background: rgba(4,16,32,0.88); backdrop-filter: blur(14px);
+  border: 1px solid rgba(56,225,255,0.25); border-left: 3px solid var(--electric);
+  border-radius: 12px; font-family: var(--font-mono);
+}
+.iv-info-overlay .iv-info-num { font-size: .6rem; letter-spacing: .35em; color: var(--electric); text-transform: uppercase; margin-bottom: .35rem; display: block; }
+.iv-info-overlay .iv-info-title { font-family: var(--font-display); font-size: .9rem; color: var(--fg-1); letter-spacing: .06em; margin-bottom: .3rem; }
+.iv-info-overlay .iv-info-desc { font-size: .72rem; color: var(--fg-3); line-height: 1.6; }
+.iv-info-overlay .iv-info-benefit { margin-top: .5rem; font-size: .68rem; color: var(--safe); border-top: 1px dashed rgba(56,225,255,0.2); padding-top: .4rem; }
+.iv-cfg-badge {
+  position: absolute; top: .8rem; left: .8rem; z-index: 5;
+  display: flex; gap: .5rem; flex-wrap: wrap; pointer-events: none;
+}
+.iv-cfg-tag {
+  padding: .3rem .7rem;
+  background: rgba(4,16,32,0.82); backdrop-filter: blur(10px);
+  border: 1px solid rgba(56,225,255,0.2); border-radius: 999px;
+  font-family: var(--font-mono); font-size: .58rem; letter-spacing: .2em;
+  color: var(--fg-2); text-transform: uppercase;
+}
+.iv-cfg-tag span { color: var(--electric); font-weight: 700; }
+
 </style>
 <meta name="theme-color" content="#03101f" media="(prefers-color-scheme: dark)">
 <meta name="description" content="HydroNova — AI-driven smart water treatment systems. Configure your unit, see live impact, and bring WHO-grade clean water anywhere.">
@@ -1933,6 +2040,7 @@ footer {
     <button class="process-btn" onclick="setProcView('flow')">Animate Flow</button>
     <button class="process-btn" onclick="setProcView('explode')">Explode View</button>
     <button class="process-btn" onclick="setProcView('reset')">Reset</button>
+    <button class="process-btn" id="inside-view-btn" onclick="openInsideView()" style="background:rgba(56,225,255,0.12);border-color:rgba(56,225,255,0.45);color:var(--electric);">⚙ Inside View</button>
   </div>
   <div class="stage-panel">
     <div class="stage-card active" data-stage="0" onclick="focusStage(0)"><div class="stage-icon">💧</div><div class="stage-name">Intake</div></div>
@@ -2749,11 +2857,11 @@ function initHeroCanvas() {
   const droplets = new THREE.Points(dropGeo, dropMat);
   scene.add(droplets);
 
-  // Central refractive water sphere — realistic envMap-like material via MeshPhysicalMaterial
-  const sphereGeo = new THREE.SphereGeometry(5.2, 96, 96);
+  // Central refractive water sphere — realistic envMap-like material
+  const sphereGeo = new THREE.SphereGeometry(5.2, 128, 128);
   const sphereMat = new THREE.MeshPhongMaterial({
-    color: 0x1ea7ff, emissive: 0x002a55, emissiveIntensity: 0.4,
-    transparent: true, opacity: 0.55, shininess: 140, specular: 0x66e0ff
+    color: 0x0e8fdb, emissive: 0x001844, emissiveIntensity: 0.55,
+    transparent: true, opacity: 0.62, shininess: 200, specular: 0x88d8ff
   });
   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
   scene.add(sphere);
@@ -2778,6 +2886,16 @@ function initHeroCanvas() {
     m.rotation.set(Math.random(),Math.random(),Math.random());
     m.userData.s = 0.002 + i*0.0015;
     scene.add(m); ribbons.push(m);
+  }
+
+  // Additional outer water ripple rings (atmospheric)
+  for (let i=0;i<5;i++) {
+    const ripGeo = new THREE.TorusGeometry(5.5 + i*1.0, 0.015, 8, 180);
+    const ripMat = new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.18-i*0.03, blending:THREE.AdditiveBlending });
+    const rip = new THREE.Mesh(ripGeo, ripMat);
+    rip.rotation.x = i*0.25; rip.rotation.z = i*0.18;
+    rip.userData.rotSp = (0.002+i*0.0008)*(i%2===0?1:-1);
+    scene.add(rip); ribbons.push(rip);
   }
 
   // Energy rings (thin torus, additive)
@@ -3039,82 +3157,293 @@ function buildStageIntake() {
 
 function buildStageSediment() {
   const g = new THREE.Group();
-  // Tank cylinder transparent
-  const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,3.2,32,1,true),
-    new THREE.MeshPhongMaterial({color:0x00aacc, transparent:true, opacity:0.18, side:THREE.DoubleSide}));
-  g.add(tank);
-  // Top + bottom rims
-  [1.6,-1.6].forEach(y=>{
-    const r = new THREE.Mesh(new THREE.TorusGeometry(1.6,0.06,8,32), new THREE.MeshBasicMaterial({color:0x00d4ff}));
-    r.rotation.x = Math.PI/2; r.position.y = y; g.add(r);
+
+  // === Outer housing — thick-wall transparent borosilicate ===
+  const housing = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, 4.0, 40, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x44ccee, transparent: true, opacity: 0.14, side: THREE.DoubleSide, shininess: 180, specular: 0x88ddff }));
+  g.add(housing);
+
+  // Outer wall highlight ring
+  const outerEdge = new THREE.Mesh(new THREE.CylinderGeometry(1.77, 1.77, 4.0, 40, 1, true),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.07, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }));
+  g.add(outerEdge);
+
+  // Top & bottom flanges
+  [2.0, -2.0].forEach((y, i) => {
+    const flange = new THREE.Mesh(new THREE.CylinderGeometry(1.85, 1.85, 0.14, 36),
+      new THREE.MeshPhongMaterial({ color: 0x334455, shininess: 120, specular: 0x88aacc }));
+    flange.position.y = y; g.add(flange);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.055, 8, 36),
+      new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: i===0?0.9:0.5 }));
+    ring.rotation.x = Math.PI/2; ring.position.y = y + (i===0?0.07:-0.07); g.add(ring);
   });
-  // Layered media: gravel, sand, anthracite
-  const layers = [
-    {y:-1.2, h:0.45, c:0x6b4f2a, label:'gravel'},
-    {y:-0.6, h:0.55, c:0xc9a96e, label:'sand'},
-    {y: 0.1, h:0.55, c:0x222222, label:'anthracite'},
+
+  // Inlet pipe (top, off-center) with elbow
+  const inletVertical = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,0.9,12),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess:100, specular:0x88aacc }));
+  inletVertical.position.set(0.6, 2.55, 0); g.add(inletVertical);
+  const inletElbow = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.18, 10, 16, Math.PI/2),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess:100 }));
+  inletElbow.rotation.z = -Math.PI/2; inletElbow.position.set(0.6, 2.0, 0); g.add(inletElbow);
+
+  // === Layered filtration media ===
+  const mediaLayers = [
+    { y: -1.55, h: 0.55, r: 1.7, c: 0x5a3c1a, rg: 0.9, label: 'Coarse Gravel' },   // gravel
+    { y: -0.95, h: 0.55, r: 1.7, c: 0x9e7a4a, rg: 0.8, label: 'Medium Sand' },      // coarse sand
+    { y: -0.35, h: 0.55, r: 1.7, c: 0xd4b97a, rg: 0.7, label: 'Fine Sand' },        // fine sand
+    { y:  0.3,  h: 0.62, r: 1.7, c: 0x1a1a1a, rg: 0.6, label: 'Anthracite' },       // anthracite
+    { y:  0.98, h: 0.38, r: 1.7, c: 0x2a2a3a, rg: 0.5, label: 'Activated Carbon' }, // carbon
   ];
-  let highlightLayer = null;
-  layers.forEach(L=>{
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.55,L.h,32),
-      new THREE.MeshPhongMaterial({color:L.c, emissive:L.c, emissiveIntensity:0.1}));
+  let sandLayer = null;
+  mediaLayers.forEach(L => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(L.r, L.r, L.h, 36),
+      new THREE.MeshPhongMaterial({ color: L.c, emissive: L.c, emissiveIntensity: 0.06, shininess: 30, roughness: L.rg }));
     m.position.y = L.y; g.add(m);
-    if (L.label === 'sand') highlightLayer = m;
+    // Layer boundary line
+    const edge = new THREE.Mesh(new THREE.CylinderGeometry(L.r+0.02, L.r+0.02, 0.025, 36),
+      new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent:true, opacity:0.25 }));
+    edge.position.y = L.y + L.h/2; g.add(edge);
+    if (L.label === 'Fine Sand') sandLayer = m;
   });
-  // Sediment particles falling
+
+  // Underdrain collector at bottom
+  const underdrain = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.7, 12),
+    new THREE.MeshPhongMaterial({ color: 0x336688, shininess: 80 }));
+  underdrain.position.set(0, -1.9, 0); g.add(underdrain);
+  // Underdrain laterals (horizontal fingers)
+  for (let i=0; i<8; i++) {
+    const ang = (i/8)*Math.PI*2;
+    const lat = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,1.3,8),
+      new THREE.MeshPhongMaterial({ color: 0x445566, shininess:80 }));
+    lat.rotation.z = Math.PI/2;
+    lat.position.set(Math.cos(ang)*0.55, -1.75, Math.sin(ang)*0.55);
+    lat.lookAt(Math.cos(ang)*2, -1.75, Math.sin(ang)*2);
+    g.add(lat);
+  }
+
+  // === Turbidity sensor probe ===
+  const sensorProbe = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,2.2,10),
+    new THREE.MeshPhongMaterial({ color: 0xffffff, shininess:200, specular:0xffffff }));
+  sensorProbe.position.set(-1.0, 0.5, 0.5); g.add(sensorProbe);
+  const sensorTip = new THREE.Mesh(new THREE.SphereGeometry(0.11,12,12),
+    new THREE.MeshBasicMaterial({ color: 0x00ffee, transparent:true, opacity:0.9 }));
+  sensorTip.position.set(-1.0, -0.6, 0.5); g.add(sensorTip);
+  const sensorGlow = new THREE.PointLight(0x00ffee, 0.8, 2.5);
+  sensorGlow.position.set(-1.0, -0.6, 0.5); g.add(sensorGlow);
+
+  // === Backwash nozzle (top) ===
+  const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.18,0.28,12),
+    new THREE.MeshPhongMaterial({ color: 0x667788, shininess:120 }));
+  nozzle.position.set(-0.5, 2.1, 0.5); g.add(nozzle);
+
+  // === Sediment particles (falling + settling) ===
   const seds = [];
-  for (let i=0;i<25;i++){
-    const s = new THREE.Mesh(new THREE.TetrahedronGeometry(0.06+Math.random()*0.05),
-      new THREE.MeshBasicMaterial({color:0xaa6633}));
-    s.position.set((Math.random()-0.5)*2, 1.5+Math.random()*1.5, (Math.random()-0.5)*2);
-    s.userData.v = 0.01+Math.random()*0.015;
+  const sedColors = [0xaa6633, 0x8a5020, 0xcc8844, 0x6b4020, 0xddaa66];
+  for (let i=0; i<40; i++){
+    const geo = i % 3 === 0 ? new THREE.TetrahedronGeometry(0.05+Math.random()*0.06)
+               : (i%3===1 ? new THREE.DodecahedronGeometry(0.04+Math.random()*0.04)
+               : new THREE.SphereGeometry(0.04+Math.random()*0.04, 5, 5));
+    const s = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      color: sedColors[Math.floor(Math.random()*sedColors.length)],
+      emissive: 0x220800, emissiveIntensity: 0.2
+    }));
+    const initY = Math.random() < 0.5 ? 1.8 + Math.random()*1.2 : -0.5 + Math.random()*1.5;
+    const r = Math.random() * 1.4;
+    const ang = Math.random() * Math.PI * 2;
+    s.position.set(Math.cos(ang)*r, initY, Math.sin(ang)*r);
+    s.userData.v = 0.008 + Math.random()*0.018;
+    s.userData.stopY = -1.2 + Math.random()*0.5;
+    s.userData.settled = false;
     g.add(s); seds.push(s);
   }
-  return { group:g, highlight: highlightLayer, update:(t)=>{
-    seds.forEach(s=>{ s.position.y -= s.userData.v; s.rotation.x+=0.05; s.rotation.y+=0.04;
-      if (s.position.y < 0.4) { s.position.y = 2.5; s.position.x=(Math.random()-0.5)*2; }
+
+  // === Clarified water particles rising (clean) ===
+  const riseParticles = [];
+  for (let i=0; i<18; i++){
+    const rp = new THREE.Mesh(new THREE.SphereGeometry(0.045,6,6),
+      new THREE.MeshBasicMaterial({ color: 0x88eeff, transparent:true, opacity:0.7 }));
+    rp.position.set((Math.random()-0.5)*1.2, -1.8+Math.random()*3, (Math.random()-0.5)*1.2);
+    rp.userData.vy = 0.012+Math.random()*0.016;
+    rp.userData.phase = Math.random()*Math.PI*2;
+    g.add(rp); riseParticles.push(rp);
+  }
+
+  return { group: g, highlight: sandLayer, update: (t) => {
+    // Settling sediment with realistic physics
+    seds.forEach(s => {
+      if (!s.userData.settled) {
+        s.position.y -= s.userData.v * (1 + Math.sin(t + s.userData.v * 10) * 0.3);
+        s.rotation.x += 0.04; s.rotation.z += 0.03;
+        if (s.position.y < s.userData.stopY) {
+          s.userData.settled = true;
+          setTimeout(() => { s.userData.settled = false; s.position.y = 2.5 + Math.random(); s.userData.stopY = -1.2+Math.random()*0.8; }, 800 + Math.random()*1200);
+        }
+      }
     });
+    // Clarified water rises
+    riseParticles.forEach(rp => {
+      rp.position.y += rp.userData.vy;
+      rp.position.x += Math.sin(t*1.5+rp.userData.phase)*0.005;
+      const pulse = 0.5 + Math.sin(t*3+rp.userData.phase)*0.3;
+      rp.material.opacity = pulse * 0.75;
+      if (rp.position.y > 2.2) { rp.position.y = -2.0; rp.position.x=(Math.random()-0.5)*1.2; rp.position.z=(Math.random()-0.5)*1.2; }
+    });
+    // Sensor tip pulse
+    sensorGlow.intensity = 0.6 + Math.sin(t*3.5)*0.4;
+    sensorTip.material.opacity = 0.6 + Math.sin(t*3.5)*0.3;
+    // Slow rotation
+    g.rotation.y += 0.002;
   }};
 }
 
 function buildStageFiltration() {
   const g = new THREE.Group();
-  // Membrane housing
-  const housing = new THREE.Mesh(new THREE.CylinderGeometry(1.3,1.3,3.5,32,1,true),
-    new THREE.MeshPhongMaterial({color:0x00aacc, transparent:true, opacity:0.22, side:THREE.DoubleSide}));
-  g.add(housing);
-  // Inner membrane spirals (carbon block lines)
-  for (let i=0;i<24;i++){
-    const ang = (i/24)*Math.PI*2;
-    const line = new THREE.Mesh(new THREE.BoxGeometry(0.04,3.3,0.04),
-      new THREE.MeshBasicMaterial({color:0x00ffee, transparent:true, opacity:0.5}));
-    line.position.set(Math.cos(ang)*1.0, 0, Math.sin(ang)*1.0);
-    g.add(line);
+
+  // === Outer Pressure Vessel (horizontal cylindrical) ===
+  const vesselOuter = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.45, 5.5, 40, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x667788, transparent: true, opacity: 0.25, side: THREE.DoubleSide, shininess: 160, specular: 0xaaccee }));
+  vesselOuter.rotation.z = Math.PI / 2; g.add(vesselOuter);
+
+  // Metal end caps with bolts
+  [-2.75, 2.75].forEach(x => {
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(1.45, 24, 12, 0, Math.PI*2, 0, Math.PI/2),
+      new THREE.MeshPhongMaterial({ color: 0x4a5f70, shininess: 140, specular: 0x88aacc }));
+    cap.rotation.y = x > 0 ? Math.PI/2 : -Math.PI/2;
+    cap.rotation.z = x > 0 ? Math.PI/2 : -Math.PI/2;
+    cap.position.x = x; g.add(cap);
+    // Bolt ring
+    for (let b=0; b<8; b++) {
+      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.14, 6),
+        new THREE.MeshPhongMaterial({ color: 0xaabbcc, shininess: 200 }));
+      const ba = (b/8)*Math.PI*2;
+      bolt.rotation.z = Math.PI/2;
+      bolt.position.set(x + (x>0?0.07:-0.07), Math.cos(ba)*1.15, Math.sin(ba)*1.15);
+      g.add(bolt);
+    }
+  });
+
+  // Inlet/outlet flanges  
+  [-2.78, 2.78].forEach(x => {
+    const f = new THREE.Mesh(new THREE.TorusGeometry(1.48, 0.09, 8, 28),
+      new THREE.MeshPhongMaterial({ color: 0x556677, shininess: 120 }));
+    f.rotation.y = Math.PI/2; f.position.x = x; g.add(f);
+  });
+
+  // === Multi-layer membrane elements (inside) ===
+  // Carbon block pre-filter
+  const carbonBlock = new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 1.4, 32),
+    new THREE.MeshPhongMaterial({ color: 0x1a1a1a, emissive: 0x050505, emissiveIntensity: 0.2, shininess: 20 }));
+  carbonBlock.rotation.z = Math.PI/2; carbonBlock.position.x = -1.8; g.add(carbonBlock);
+
+  // Nano-fiber membrane housing
+  const membraneHousing = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 1.35, 2.0, 32),
+    new THREE.MeshPhongMaterial({ color: 0x2255aa, emissive: 0x001133, emissiveIntensity: 0.3, transparent:true, opacity:0.7 }));
+  membraneHousing.rotation.z = Math.PI/2; membraneHousing.position.x = 0.5; g.add(membraneHousing);
+
+  // Inner membrane spirals — 32 radial fibers
+  for (let i=0; i<32; i++){
+    const ang = (i/32)*Math.PI*2;
+    const fiber = new THREE.Mesh(new THREE.BoxGeometry(0.03, 2.2, 0.03),
+      new THREE.MeshBasicMaterial({ color: 0x00ccff, transparent:true, opacity:0.55 }));
+    fiber.position.set(0.5, Math.cos(ang)*1.05, Math.sin(ang)*1.05);
+    fiber.rotation.x = ang; g.add(fiber);
   }
-  // Central core
-  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,3.4,16),
-    new THREE.MeshPhongMaterial({color:0x004080, emissive:0x0066aa, emissiveIntensity:0.5}));
-  g.add(core);
-  // Particles entering top dirty / leaving bottom clean
-  const inP = [], outP = [];
-  for (let i=0;i<20;i++){
-    const dirty = new THREE.Mesh(new THREE.SphereGeometry(0.08,6,6),
-      new THREE.MeshBasicMaterial({color:0xaa5522}));
-    dirty.position.set((Math.random()-0.5)*1.8, 2+Math.random()*1, (Math.random()-0.5)*1.8);
-    dirty.userData.v = 0.015+Math.random()*0.015;
-    g.add(dirty); inP.push(dirty);
-    const clean = new THREE.Mesh(new THREE.SphereGeometry(0.06,6,6),
-      new THREE.MeshBasicMaterial({color:0x00ffee, transparent:true, opacity:0.9}));
-    clean.position.set((Math.random()-0.5)*1.5, -2-Math.random()*1, (Math.random()-0.5)*1.5);
-    clean.userData.v = 0.015+Math.random()*0.015;
-    g.add(clean); outP.push(clean);
+
+  // Central permeate tube
+  const permeateTube = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 5.0, 16, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x003366, transparent:true, opacity:0.6, side:THREE.DoubleSide }));
+  permeateTube.rotation.z = Math.PI/2; g.add(permeateTube);
+  const permeateCore = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 5.0, 16),
+    new THREE.MeshBasicMaterial({ color: 0x0066aa, transparent:true, opacity:0.4, blending:THREE.AdditiveBlending }));
+  permeateCore.rotation.z = Math.PI/2; g.add(permeateCore);
+
+  // Glow along permeate tube
+  const permLight = new THREE.PointLight(0x0066ff, 1.5, 6);
+  permLight.position.set(0, 0, 0); g.add(permLight);
+
+  // === Support pipes & brackets ===
+  [-1.6, 1.6].forEach(x => {
+    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 1.8),
+      new THREE.MeshPhongMaterial({ color: 0x445566, shininess: 80 }));
+    bracket.position.set(x, -1.55, 0); g.add(bracket);
+  });
+
+  // Pressure gauge (top)
+  const gaugeBody = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.12, 16),
+    new THREE.MeshPhongMaterial({ color: 0xaabbcc, shininess: 140 }));
+  gaugeBody.position.set(0.5, 1.55, 0); g.add(gaugeBody);
+  const gaugeFace = new THREE.Mesh(new THREE.CircleGeometry(0.18, 16),
+    new THREE.MeshBasicMaterial({ color: 0xeef8ff, transparent:true, opacity:0.9 }));
+  gaugeFace.position.set(0.5, 1.62, 0); g.add(gaugeFace);
+  const gaugeNeedle = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.15, 0.02),
+    new THREE.MeshBasicMaterial({ color: 0xff4444 }));
+  gaugeNeedle.position.set(0.5, 1.62, 0.01); g.add(gaugeNeedle);
+
+  // === Dirty water particles entering (brown) ===
+  const dirtyPts = [];
+  for (let i=0; i<30; i++){
+    const dp = new THREE.Mesh(new THREE.SphereGeometry(0.055+Math.random()*0.04, 6, 6),
+      new THREE.MeshBasicMaterial({ color: i%3===0?0xaa5522:i%3===1?0x8a4418:0xcc6633 }));
+    dp.position.set(-3.0+Math.random()*1.5, (Math.random()-0.5)*2.2, (Math.random()-0.5)*2.2);
+    dp.userData.vx = 0.01+Math.random()*0.015;
+    dp.userData.startX = -3.0+Math.random();
+    g.add(dp); dirtyPts.push(dp);
   }
-  return { group:g, highlight: housing, update:(t)=>{
-    g.rotation.y += 0.005;
-    inP.forEach(p=>{ p.position.y -= p.userData.v;
-      if (p.position.y < -1.7){ p.position.y = 2.5; p.position.x=(Math.random()-0.5)*1.8; p.position.z=(Math.random()-0.5)*1.8; }});
-    outP.forEach(p=>{ p.position.y -= p.userData.v;
-      if (p.position.y < -3.5){ p.position.y = -1.7; p.position.x=(Math.random()-0.5)*1.5; p.position.z=(Math.random()-0.5)*1.5; }});
+
+  // === Clean water particles exiting (bright cyan) ===
+  const cleanPts = [];
+  for (let i=0; i<28; i++){
+    const cp = new THREE.Mesh(new THREE.SphereGeometry(0.045+Math.random()*0.03, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0x00ffee, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending }));
+    cp.position.set(1.5+Math.random()*1.5, (Math.random()-0.5)*2, (Math.random()-0.5)*2);
+    cp.userData.vx = 0.012+Math.random()*0.012;
+    g.add(cp); cleanPts.push(cp);
+  }
+
+  // === VOC / Metal particle capture (disappearing near carbon) ===
+  const contamPts = [];
+  for (let i=0; i<14; i++){
+    const ct = new THREE.Mesh(new THREE.IcosahedronGeometry(0.07, 0),
+      new THREE.MeshBasicMaterial({ color: 0xff8833 }));
+    ct.position.set(-2.5+Math.random(), (Math.random()-0.5)*1.8, (Math.random()-0.5)*1.8);
+    ct.userData.vx = 0.008+Math.random()*0.01;
+    ct.userData.captured = false;
+    g.add(ct); contamPts.push(ct);
+  }
+
+  return { group: g, highlight: membraneHousing, update: (t) => {
+    // Dirty particles flow in and get caught by carbon block
+    dirtyPts.forEach(dp => {
+      dp.position.x += dp.userData.vx;
+      if (dp.position.x > -0.4) {
+        // Captured — reset
+        dp.position.x = dp.userData.startX;
+        dp.position.set(dp.userData.startX, (Math.random()-0.5)*2.2, (Math.random()-0.5)*2.2);
+      }
+      dp.rotation.x += 0.05; dp.rotation.y += 0.04;
+    });
+    // Contaminant particles captured in carbon
+    contamPts.forEach(ct => {
+      ct.position.x += ct.userData.vx;
+      if (ct.position.x > -1.0) {
+        ct.scale.multiplyScalar(0.92);
+        if (ct.scale.x < 0.05) { ct.position.set(-2.5+Math.random()*0.5, (Math.random()-0.5)*1.8, (Math.random()-0.5)*1.8); ct.scale.set(1,1,1); }
+      }
+      ct.rotation.x += 0.04;
+    });
+    // Clean particles exit right
+    cleanPts.forEach(cp => {
+      cp.position.x += cp.userData.vx;
+      if (cp.position.x > 3.2) { cp.position.x = 1.5; cp.position.y=(Math.random()-0.5)*2; cp.position.z=(Math.random()-0.5)*2; }
+      const tw = 0.5 + Math.sin(t*4+cp.position.x)*0.4;
+      cp.material.opacity = tw * 0.9;
+    });
+    // Permeate glow
+    permLight.intensity = 1.2 + Math.sin(t*3)*0.6;
+    // Gauge needle oscillation
+    gaugeNeedle.rotation.z = 0.5 + Math.sin(t*1.8)*0.25;
+    // Slow rotation
+    g.rotation.y += 0.003;
   }};
 }
 
@@ -3422,89 +3751,392 @@ function buildStageAI() {
 
 function buildStageStorage() {
   const g = new THREE.Group();
-  // Tank
-  const tankH = 4;
-  const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,tankH,32,1,true),
-    new THREE.MeshPhongMaterial({color:0x00aacc, transparent:true, opacity:0.22, side:THREE.DoubleSide}));
-  g.add(tank);
-  // Top dome
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(1.7,24,12,0,Math.PI*2,0,Math.PI/2),
-    new THREE.MeshPhongMaterial({color:0x336688, transparent:true, opacity:0.5}));
-  dome.position.y = tankH/2; g.add(dome);
-  // Base
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.85,1.85,0.2,32),
-    new THREE.MeshPhongMaterial({color:0x222222}));
-  base.position.y = -tankH/2; g.add(base);
-  // Water level (animated)
-  const water = new THREE.Mesh(new THREE.CylinderGeometry(1.65,1.65,2,32),
-    new THREE.MeshPhongMaterial({color:0x00d4ff, emissive:0x0088cc, emissiveIntensity:0.45, transparent:true, opacity:0.7}));
-  water.position.y = -1; g.add(water);
-  // Sensor probes
-  for (let i=0;i<3;i++){
-    const probe = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,1.8,8),
-      new THREE.MeshBasicMaterial({color:0xff8800}));
-    probe.position.set(Math.cos(i*2.1)*1.2, 1.2, Math.sin(i*2.1)*1.2);
-    g.add(probe);
-  }
-  // Outlet pipe
-  const outlet = new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.25,1.5,12),
-    new THREE.MeshPhongMaterial({color:0x666666}));
-  outlet.position.set(2.0,-1.7,0); outlet.rotation.z = Math.PI/2; g.add(outlet);
 
-  let level = 1.5;
-  return { group:g, highlight: tank, update:(t)=>{
-    level = 1.4 + Math.sin(t*0.5)*0.6;
-    water.scale.y = level/2;
-    water.position.y = -2 + level/2;
-    g.rotation.y += 0.003;
+  // === Main pressure vessel ===
+  const tankH = 4.8, tankR = 1.8;
+  const tankWall = new THREE.Mesh(new THREE.CylinderGeometry(tankR, tankR, tankH, 40, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x4488aa, transparent:true, opacity:0.22, side:THREE.DoubleSide, shininess:160, specular:0x88ccee }));
+  g.add(tankWall);
+
+  // Inner structural wall (double-wall insulation)
+  const innerWall = new THREE.Mesh(new THREE.CylinderGeometry(tankR-0.12, tankR-0.12, tankH-0.1, 36, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x003355, transparent:true, opacity:0.12, side:THREE.DoubleSide }));
+  g.add(innerWall);
+
+  // Top ellipsoidal dome
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(tankR, 32, 16, 0, Math.PI*2, 0, Math.PI/2),
+    new THREE.MeshPhongMaterial({ color: 0x336688, shininess:140, specular:0x88bbdd, transparent:true, opacity:0.55 }));
+  dome.position.y = tankH/2; g.add(dome);
+
+  // Bottom cone (drainage)
+  const bottomCone = new THREE.Mesh(new THREE.ConeGeometry(tankR, 0.9, 32, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x2a4455, shininess:100, transparent:true, opacity:0.5 }));
+  bottomCone.rotation.x = Math.PI; bottomCone.position.y = -tankH/2; g.add(bottomCone);
+
+  // Skirt support
+  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(tankR+0.05, tankR+0.25, 0.8, 32, 1, true),
+    new THREE.MeshPhongMaterial({ color: 0x334455, shininess:80 }));
+  skirt.position.y = -tankH/2 - 0.35; g.add(skirt);
+
+  // Horizontal stiffener rings
+  [-1.4, 0, 1.4].forEach(y => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(tankR+0.04, 0.07, 8, 40),
+      new THREE.MeshPhongMaterial({ color: 0x445566, shininess:120 }));
+    ring.rotation.x = Math.PI/2; ring.position.y = y; g.add(ring);
+  });
+  // Top dome ring
+  const topRing = new THREE.Mesh(new THREE.TorusGeometry(tankR+0.02, 0.08, 8, 40),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent:true, opacity:0.8 }));
+  topRing.rotation.x = Math.PI/2; topRing.position.y = tankH/2; g.add(topRing);
+
+  // === Manway (access hatch on top) ===
+  const manway = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.22, 20),
+    new THREE.MeshPhongMaterial({ color: 0x556677, shininess:120 }));
+  manway.position.set(0, tankH/2+0.22+0.11, 0); g.add(manway);
+  const manwayCover = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.06, 20),
+    new THREE.MeshPhongMaterial({ color: 0x445566, shininess:140 }));
+  manwayCover.position.set(0, tankH/2+0.22+0.25, 0); g.add(manwayCover);
+
+  // Vent pipe
+  const vent = new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.7,8),
+    new THREE.MeshPhongMaterial({ color: 0x667788, shininess:80 }));
+  vent.position.set(-0.6, tankH/2+0.18+0.35, 0); g.add(vent);
+  const ventCap = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.1, 8),
+    new THREE.MeshPhongMaterial({ color: 0x556677, shininess:80 }));
+  ventCap.position.set(-0.6, tankH/2+0.18+0.75, 0); g.add(ventCap);
+
+  // === Sensor probes (temp, level, pressure, bacteria) ===
+  const probeConfigs = [
+    { pos:[1.25, 0.8, 0.5], color:0xff8800, label:'Temp' },
+    { pos:[1.25, -0.4, -0.5], color:0x00ffee, label:'Level' },
+    { pos:[-1.25, 0.3, 0.8], color:0xff4444, label:'Pressure' },
+    { pos:[-1.25, -0.8, -0.3], color:0x00ff88, label:'Quality' },
+  ];
+  const probeLights = [];
+  probeConfigs.forEach(pc => {
+    const probe = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,2.0,8),
+      new THREE.MeshPhongMaterial({ color:0xccddee, shininess:160, specular:0xffffff }));
+    probe.position.set(...pc.pos); g.add(probe);
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.1,12,12),
+      new THREE.MeshBasicMaterial({ color:pc.color, transparent:true, opacity:0.9 }));
+    tip.position.set(pc.pos[0], pc.pos[1]-0.9, pc.pos[2]); g.add(tip);
+    const pl = new THREE.PointLight(pc.color, 0.6, 2.0);
+    pl.position.set(...tip.position.toArray()); g.add(pl);
+    probeLights.push({light:pl, color:pc.color, phase:Math.random()*Math.PI*2});
+  });
+
+  // === Inlet pipe ===
+  const inlet = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,1.4,12),
+    new THREE.MeshPhongMaterial({ color:0x445566, shininess:100 }));
+  inlet.position.set(-tankR-0.7, tankH*0.3, 0); inlet.rotation.z = Math.PI/2; g.add(inlet);
+  const inletFlange = new THREE.Mesh(new THREE.TorusGeometry(0.22,0.05,8,16),
+    new THREE.MeshBasicMaterial({ color:0x00d4ff }));
+  inletFlange.rotation.y = Math.PI/2; inletFlange.position.set(-tankR-0.05, tankH*0.3, 0); g.add(inletFlange);
+
+  // === Outlet pipe with smart valve ===
+  const outlet = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,1.6,12),
+    new THREE.MeshPhongMaterial({ color:0x445566, shininess:100 }));
+  outlet.position.set(tankR+0.8, -tankH*0.25, 0); outlet.rotation.z = Math.PI/2; g.add(outlet);
+  const valveBody = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.45,0.45),
+    new THREE.MeshPhongMaterial({ color:0x335577, shininess:100 }));
+  valveBody.position.set(tankR+0.3, -tankH*0.25, 0); g.add(valveBody);
+  const valveActuator = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.35,10),
+    new THREE.MeshBasicMaterial({ color:0x00ffee }));
+  valveActuator.position.set(tankR+0.3, -tankH*0.25+0.4, 0); g.add(valveActuator);
+  const outletGlow = new THREE.Mesh(new THREE.TorusGeometry(0.22,0.05,8,16),
+    new THREE.MeshBasicMaterial({ color:0x00ffee, transparent:true, opacity:0.9 }));
+  outletGlow.rotation.y = Math.PI/2; outletGlow.position.set(tankR+1.62, -tankH*0.25, 0); g.add(outletGlow);
+  const outLight = new THREE.PointLight(0x00ffee, 0.8, 3);
+  outLight.position.set(tankR+1.62, -tankH*0.25, 0); g.add(outLight);
+
+  // === Animated water level (4 layers: sloshing) ===
+  const waterLayers = [];
+  for (let i=0; i<3; i++) {
+    const wl = new THREE.Mesh(new THREE.CylinderGeometry(tankR-0.14, tankR-0.14, 0.04, 36),
+      new THREE.MeshPhongMaterial({
+        color: i===0?0x0099cc:i===1?0x00bbee:0x00eeff,
+        emissive: i===0?0x003344:i===1?0x005566:0x0088aa,
+        emissiveIntensity: 0.4+i*0.15,
+        transparent:true, opacity:0.75-i*0.2,
+        shininess:240, specular:0x88eeff
+      }));
+    wl.userData.baseY = -1.5 + i*0.8;
+    wl.position.y = wl.userData.baseY;
+    g.add(wl); waterLayers.push(wl);
+  }
+
+  // Water body fill
+  const waterFill = new THREE.Mesh(new THREE.CylinderGeometry(tankR-0.15, tankR-0.15, 2.2, 36),
+    new THREE.MeshPhongMaterial({ color:0x0077aa, emissive:0x003355, emissiveIntensity:0.3, transparent:true, opacity:0.55 }));
+  waterFill.position.y = -0.8; g.add(waterFill);
+
+  // Caustic light inside water
+  const causticLight = new THREE.PointLight(0x00aadd, 1.8, tankR*2+1);
+  causticLight.position.set(0, -0.5, 0); g.add(causticLight);
+
+  // === Rising bubbles inside ===
+  const bubbles = [];
+  for (let i=0; i<20; i++) {
+    const b = new THREE.Mesh(new THREE.SphereGeometry(0.04+Math.random()*0.06, 8, 8),
+      new THREE.MeshBasicMaterial({ color:0xaaeeff, transparent:true, opacity:0.5 }));
+    const r = Math.random()*1.3, ang = Math.random()*Math.PI*2;
+    b.position.set(Math.cos(ang)*r, -2.0+Math.random()*1.5, Math.sin(ang)*r);
+    b.userData.vy = 0.01+Math.random()*0.018;
+    b.userData.phase = Math.random()*Math.PI*2;
+    g.add(b); bubbles.push(b);
+  }
+
+  // === Telemetry wire harness ===
+  const harnessGeo = new THREE.TubeGeometry(
+    new THREE.CatmullRomCurve3([
+      new THREE.Vector3(1.25, 0.8, 0.5),
+      new THREE.Vector3(1.5, 1.2, 0.5),
+      new THREE.Vector3(1.8, 1.5, 0),
+      new THREE.Vector3(1.5, 2.0, -0.3),
+      new THREE.Vector3(0, 2.3, 0)
+    ]), 40, 0.025, 6, false
+  );
+  const harness = new THREE.Mesh(harnessGeo,
+    new THREE.MeshBasicMaterial({ color:0xffaa00, transparent:true, opacity:0.7 }));
+  g.add(harness);
+
+  let level = 0.75;
+  return { group: g, highlight: tankWall, update: (t) => {
+    // Sloshing water surface
+    level = 0.7 + Math.sin(t*0.6)*0.15;
+    waterFill.scale.y = level;
+    waterFill.position.y = -2.4 + level*1.1;
+    waterLayers.forEach((wl, i) => {
+      const slosh = Math.sin(t*0.9 + i*1.2)*0.06;
+      wl.position.y = waterFill.position.y + waterFill.scale.y*1.1 + i*0.03 + slosh;
+      wl.scale.x = 1+slosh*0.5; wl.scale.z = 1-slosh*0.3;
+      wl.material.opacity = (0.75-i*0.2)*(0.8+Math.sin(t*2+i)*0.2);
+    });
+    // Bubble physics
+    bubbles.forEach(b => {
+      b.position.y += b.userData.vy;
+      b.position.x += Math.sin(t*2.5+b.userData.phase)*0.008;
+      const tw = 0.4+Math.sin(t*4+b.userData.phase)*0.35;
+      b.material.opacity = tw * 0.6;
+      if (b.position.y > waterFill.position.y + waterFill.scale.y*1.1 + 0.1) {
+        const r = Math.random()*1.2, ang = Math.random()*Math.PI*2;
+        b.position.set(Math.cos(ang)*r, -2.0+Math.random()*0.4, Math.sin(ang)*r);
+      }
+    });
+    // Sensor pulse
+    probeLights.forEach(pl => {
+      pl.light.intensity = 0.4 + Math.sin(t*3.5+pl.phase)*0.4;
+    });
+    // Outlet flow ring glow
+    outLight.intensity = 0.6 + Math.sin(t*5)*0.5;
+    outletGlow.material.opacity = 0.6 + Math.sin(t*5)*0.3;
+    // Caustic shimmer
+    causticLight.intensity = 1.5 + Math.sin(t*1.8)*0.5;
+    causticLight.position.x = Math.sin(t*0.7)*0.8;
+    causticLight.position.z = Math.cos(t*0.5)*0.8;
+    // Slow rotation
+    g.rotation.y += 0.0025;
   }};
 }
-
 function buildStageDistribute() {
   const g = new THREE.Group();
-  // Central hub
-  const hub = new THREE.Mesh(new THREE.SphereGeometry(0.7,24,24),
-    new THREE.MeshPhongMaterial({color:0x00d4ff, emissive:0x00ffee, emissiveIntensity:0.6}));
-  g.add(hub);
-  // Houses around (low-poly)
+
+  // === Central smart manifold hub ===
+  const hubBody = new THREE.Mesh(new THREE.SphereGeometry(0.9, 32, 32),
+    new THREE.MeshPhongMaterial({ color:0x002244, emissive:0x001133, emissiveIntensity:0.4, shininess:140, specular:0x0088cc, transparent:true, opacity:0.85 }));
+  g.add(hubBody);
+  const hubRing = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.08, 8, 32),
+    new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.9 }));
+  hubRing.rotation.x = Math.PI/2; g.add(hubRing);
+  const hubRing2 = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.06, 8, 32),
+    new THREE.MeshBasicMaterial({ color:0x00ffee, transparent:true, opacity:0.5 }));
+  // tilted ring
+  hubRing2.rotation.z = Math.PI/3; g.add(hubRing2);
+
+  // Hub inner glow
+  const hubGlow = new THREE.PointLight(0x00d4ff, 3.5, 6);
+  hubGlow.position.set(0,0,0); g.add(hubGlow);
+  const hubCore = new THREE.Mesh(new THREE.SphereGeometry(0.45,24,24),
+    new THREE.MeshBasicMaterial({ color:0x0088ff, transparent:true, opacity:0.6, blending:THREE.AdditiveBlending }));
+  g.add(hubCore);
+  // CPU-like top detail
+  const chipTop = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.04, 0.9),
+    new THREE.MeshPhongMaterial({ color:0x001122, shininess:200 }));
+  chipTop.position.y = 0.91; g.add(chipTop);
+  for (let ci=0; ci<3; ci++) for (let cj=0; cj<3; cj++) {
+    const cell = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.03, 0.2),
+      new THREE.MeshBasicMaterial({ color:0x0044aa }));
+    cell.position.set(-0.3+ci*0.3, 0.94, -0.3+cj*0.3); g.add(cell);
+  }
+
+  // === Distribution network — 6 branches of varying scale ===
+  const branchConfigs = [
+    { ang: 0,           r: 2.8, type: 'residential', scale:1.0 },
+    { ang: Math.PI/3,   r: 3.0, type: 'commercial',  scale:1.3 },
+    { ang: 2*Math.PI/3, r: 2.6, type: 'residential', scale:0.85 },
+    { ang: Math.PI,     r: 3.2, type: 'industrial',   scale:1.5 },
+    { ang: 4*Math.PI/3, r: 2.9, type: 'residential', scale:0.9 },
+    { ang: 5*Math.PI/3, r: 2.7, type: 'agricultural', scale:1.1 },
+  ];
+
   const houses = [];
   const flows = [];
-  for (let i=0;i<6;i++){
-    const ang = (i/6)*Math.PI*2;
-    const r = 2.6;
+  const flowArrows = [];
+  const pipes = [];
+  const valves = [];
+
+  branchConfigs.forEach((bc, idx) => {
+    const hx = Math.cos(bc.ang)*bc.r, hz = Math.sin(bc.ang)*bc.r;
     const hg = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.7,0.6,0.7),
-      new THREE.MeshPhongMaterial({color:0x224466, emissive:0x002244, emissiveIntensity:0.3}));
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.55,0.45,4),
-      new THREE.MeshPhongMaterial({color:0x00d4ff, emissive:0x0088aa, emissiveIntensity:0.4}));
-    roof.position.y = 0.5; roof.rotation.y = Math.PI/4;
-    hg.add(body); hg.add(roof);
-    hg.position.set(Math.cos(ang)*r, 0, Math.sin(ang)*r);
-    hg.lookAt(0,0,0);
-    g.add(hg); houses.push(hg);
-    // Pipe line
-    const pts = [new THREE.Vector3(0,0,0), hg.position.clone()];
-    const lg = new THREE.BufferGeometry().setFromPoints(pts);
-    const ln = new THREE.Line(lg, new THREE.LineBasicMaterial({color:0x00d4ff, transparent:true, opacity:0.4}));
-    g.add(ln);
-    // Flow droplet
-    const d = new THREE.Mesh(new THREE.SphereGeometry(0.09,8,8),
-      new THREE.MeshBasicMaterial({color:0x00ffee}));
-    d.userData.target = hg.position.clone();
-    d.userData.t = Math.random();
-    g.add(d); flows.push(d);
+    hg.position.set(hx, 0, hz);
+
+    // Different building types
+    if (bc.type === 'residential') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.7*bc.scale, 0.65*bc.scale, 0.7*bc.scale),
+        new THREE.MeshPhongMaterial({ color:0x223355, emissive:0x001133, emissiveIntensity:0.3, shininess:60 }));
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(0.55*bc.scale, 0.45*bc.scale, 4),
+        new THREE.MeshPhongMaterial({ color:0x00aacc, emissive:0x005566, emissiveIntensity:0.4 }));
+      roof.position.y = 0.55*bc.scale; roof.rotation.y = Math.PI/4;
+      hg.add(body); hg.add(roof);
+      // Window glow
+      const win = new THREE.Mesh(new THREE.BoxGeometry(0.22*bc.scale, 0.2*bc.scale, 0.02),
+        new THREE.MeshBasicMaterial({ color:0x88ddff, transparent:true, opacity:0.9 }));
+      win.position.set(0, 0.05*bc.scale, 0.37*bc.scale); hg.add(win);
+    } else if (bc.type === 'commercial') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.8*bc.scale, 1.2*bc.scale, 0.8*bc.scale),
+        new THREE.MeshPhongMaterial({ color:0x223366, emissive:0x001144, emissiveIntensity:0.3 }));
+      body.position.y = 0.2*bc.scale;
+      const top = new THREE.Mesh(new THREE.BoxGeometry(0.82*bc.scale, 0.1, 0.82*bc.scale),
+        new THREE.MeshBasicMaterial({ color:0x00d4ff }));
+      top.position.y = 0.85*bc.scale;
+      hg.add(body); hg.add(top);
+    } else if (bc.type === 'industrial') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.2*bc.scale, 0.9*bc.scale, 0.9*bc.scale),
+        new THREE.MeshPhongMaterial({ color:0x334455, shininess:80 }));
+      body.position.y = 0.15*bc.scale;
+      const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.1*bc.scale, 0.12*bc.scale, 0.9*bc.scale, 8),
+        new THREE.MeshPhongMaterial({ color:0x445566 }));
+      stack.position.set(0.3*bc.scale, 0.8*bc.scale, 0.2*bc.scale);
+      hg.add(body); hg.add(stack);
+    } else { // agricultural
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.4*bc.scale, 0.5*bc.scale, 0.8*bc.scale),
+        new THREE.MeshPhongMaterial({ color:0x2a4020, emissive:0x0a1a08, emissiveIntensity:0.2 }));
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(1.45*bc.scale, 0.06, 0.85*bc.scale),
+        new THREE.MeshBasicMaterial({ color:0xcc8800 }));
+      roof.position.y = 0.28*bc.scale; hg.add(body); hg.add(roof);
+    }
+    g.add(hg); houses.push({group:hg, type:bc.type, scale:bc.scale});
+
+    // === Smart pipe from hub to building ===
+    const pipeLen = bc.r - 0.9;
+    const pipePts = [
+      new THREE.Vector3(0,0,0),
+      new THREE.Vector3(Math.cos(bc.ang)*bc.r*0.4, 0, Math.sin(bc.ang)*bc.r*0.4),
+      new THREE.Vector3(hx, 0, hz)
+    ];
+    const pipeCurve = new THREE.CatmullRomCurve3(pipePts);
+    const pipeGeo = new THREE.TubeGeometry(pipeCurve, 20, 0.045, 8, false);
+    const pipe = new THREE.Mesh(pipeGeo, new THREE.MeshPhongMaterial({ color:0x336688, shininess:100 }));
+    g.add(pipe); pipes.push(pipe);
+
+    // === Smart valve at branch point ===
+    const valve = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.18),
+      new THREE.MeshBasicMaterial({ color:0x00ffee }));
+    valve.position.set(Math.cos(bc.ang)*0.9, 0, Math.sin(bc.ang)*0.9);
+    valve.userData.phase = idx * 1.0;
+    g.add(valve); valves.push(valve);
+
+    // === Flow droplet along pipe ===
+    const numDrops = 3;
+    for (let d=0; d<numDrops; d++) {
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.075,8,8),
+        new THREE.MeshBasicMaterial({ color:0x00ffee, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending }));
+      drop.userData.t = d/numDrops;
+      drop.userData.curve = pipeCurve;
+      drop.userData.speed = 0.008 + Math.random()*0.006;
+      drop.userData.phase = idx * 0.5 + d * 0.33;
+      g.add(drop); flows.push(drop);
+    }
+
+    // === Usage indicator ring at building ===
+    const usageRing = new THREE.Mesh(new THREE.TorusGeometry(0.45*bc.scale, 0.04, 8, 24),
+      new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.35 }));
+    usageRing.position.copy(hg.position); usageRing.rotation.x = Math.PI/2;
+    usageRing.userData.phase = idx * 0.9;
+    g.add(usageRing);
+  });
+
+  // === Central data sphere (holographic quality stamp) ===
+  const dataSphere = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16),
+    new THREE.MeshBasicMaterial({ color:0x00ffee, transparent:true, opacity:0.3, blending:THREE.AdditiveBlending }));
+  dataSphere.position.y = 1.6; g.add(dataSphere);
+  const dataRing = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.03, 8, 32),
+    new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.7 }));
+  dataRing.position.y = 1.6; g.add(dataRing);
+
+  // === Quality stamp particles emitting from hub ===
+  const stamps = [];
+  for (let i=0; i<12; i++) {
+    const st = new THREE.Mesh(new THREE.OctahedronGeometry(0.06, 0),
+      new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.85, blending:THREE.AdditiveBlending }));
+    const ang = (i/12)*Math.PI*2;
+    st.position.set(Math.cos(ang)*1.2, 0, Math.sin(ang)*1.2);
+    st.userData.ang = ang; st.userData.r = 0.1+Math.random()*0.8; st.userData.speed = 0.015+Math.random()*0.01;
+    st.userData.phase = Math.random()*Math.PI*2;
+    g.add(st); stamps.push(st);
   }
-  return { group:g, highlight: hub, update:(t)=>{
-    hub.rotation.y += 0.02;
-    hub.material.emissiveIntensity = 0.5 + Math.sin(t*4)*0.25;
-    flows.forEach(d=>{
-      d.userData.t += 0.015;
-      const tt = d.userData.t % 1;
-      d.position.lerpVectors(new THREE.Vector3(0,0,0), d.userData.target, tt);
+
+  return { group: g, highlight: hubBody, update: (t) => {
+    // Hub animations
+    hubGlow.intensity = 3.0 + Math.sin(t*4)*1.2;
+    hubCore.material.opacity = 0.5 + Math.sin(t*3)*0.2;
+    hubRing.rotation.y += 0.018;
+    hubRing2.rotation.x += 0.012;
+    hubBody.material.emissiveIntensity = 0.35 + Math.sin(t*2)*0.15;
+
+    // Flow droplets along curved pipes
+    flows.forEach(d => {
+      d.userData.t = (d.userData.t + d.userData.speed) % 1;
+      const pos = d.userData.curve.getPoint(d.userData.t);
+      d.position.copy(pos);
+      d.material.opacity = Math.sin(d.userData.t * Math.PI) * 0.9;
+      const s = 0.7 + Math.sin(d.userData.t * Math.PI) * 0.5;
+      d.scale.set(s, s, s);
     });
+
+    // Valve pulses
+    valves.forEach((v, i) => {
+      v.rotation.y += 0.05;
+      const on = Math.sin(t*3+v.userData.phase) > 0.3;
+      v.material.color.setHex(on ? 0x00ffee : 0x004466);
+    });
+
+    // Houses animate (power windows, etc)
+    houses.forEach((h, i) => {
+      const pulse = 0.3 + Math.sin(t*1.5 + i*1.1)*0.15;
+      h.group.position.y = Math.sin(t*0.4+i*0.7)*0.04;
+    });
+
+    // Quality stamps orbit outward and fade
+    stamps.forEach(st => {
+      st.userData.r = Math.min(2.8, st.userData.r + st.userData.speed*0.5);
+      st.position.x = Math.cos(st.userData.ang + t*0.5)*st.userData.r;
+      st.position.z = Math.sin(st.userData.ang + t*0.5)*st.userData.r;
+      st.position.y = Math.sin(t*2+st.userData.phase)*0.4;
+      st.material.opacity = Math.max(0, 0.9 - st.userData.r/3);
+      if (st.userData.r > 2.6) { st.userData.r = 0.1; }
+      st.rotation.y += 0.08; st.rotation.x += 0.05;
+    });
+
+    // Data sphere
+    dataSphere.rotation.y += 0.025;
+    dataRing.rotation.y += 0.018;
+    dataRing.rotation.x = Math.sin(t*0.7)*0.4;
+    dataSphere.material.opacity = 0.25 + Math.sin(t*3)*0.15;
+
+    g.rotation.y += 0.002;
   }};
 }
-
 const stageBuilders = [
   buildStageIntake, buildStageSediment, buildStageFiltration,
   buildStageUV, buildStageAI, buildStageStorage, buildStageDistribute
@@ -3979,7 +4611,9 @@ function initConfiguratorCanvas() {
   // ── State update from configurator ────────────────────────
   let cfgState = { energy: 'hybrid', ai: 'pro', capacity: 50000, addons: [] };
 
+  if (!window._lastCfgState) window._lastCfgState = { energy: 'hybrid', ai: 'pro', capacity: 50000, addons: [] };
   window.updateCfgModel = function(state) {
+    window._lastCfgState = {...state, addons: state.addons instanceof Set ? [...state.addons] : (state.addons||[]) };
     const addonsArr = state.addons instanceof Set ? [...state.addons] : (state.addons || []);
     cfgState = { ...state, addons: addonsArr };
     // Solar panels visibility
@@ -4074,6 +4708,396 @@ function initConfiguratorCanvas() {
 
   window.addEventListener('resize', setSize);
 }
+
+
+/* ============================================================
+   INSIDE VIEW — Full 7-Stage Pipeline Chained View
+   Three.js scene showing all stages linked by flow pipes,
+   linked to the current configurator state.
+   ============================================================ */
+let ivRenderer = null, ivScene = null, ivCamera = null, ivRunning = false;
+let ivCurrentStage = -1;   // -1 = full view, 0-6 = focused
+let ivMode = 'full';       // 'full' | 'flow' | 'xsection'
+let ivFlowTimer = null;
+let ivT = 0;
+let ivStageGroups = [], ivStageUpdaters = [];
+
+// Current configurator state (shared reference)
+let _ivCfgState = { energy: 'hybrid', ai: 'pro', capacity: 50000, addons: [] };
+
+function openInsideView() {
+  // Sync configurator state
+  if (window._lastCfgState) _ivCfgState = {...window._lastCfgState};
+  // Update config badges
+  const capLabel = Math.round(_ivCfgState.capacity/1000) + 'K L/d';
+  const energyLabel = {grid:'Grid',hybrid:'Solar Hybrid',solar:'Full Solar'}[_ivCfgState.energy]||'Hybrid';
+  const aiLabel = {standard:'Standard',pro:'Pro',enterprise:'Enterprise'}[_ivCfgState.ai]||'Pro';
+  const el1 = document.getElementById('iv-cap-tag');
+  const el2 = document.getElementById('iv-energy-tag');
+  const el3 = document.getElementById('iv-ai-tag');
+  if(el1) el1.textContent = capLabel;
+  if(el2) el2.textContent = energyLabel;
+  if(el3) el3.textContent = aiLabel;
+
+  const modal = document.getElementById('inside-view-modal');
+  if (modal) modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Init or restart
+  if (!ivRenderer) {
+    setTimeout(initInsideView, 60);
+  } else {
+    ivRunning = true;
+    if(!ivRenderer.domElement.parentElement) return;
+    ivLoopStart();
+  }
+}
+
+function closeInsideView() {
+  const modal = document.getElementById('inside-view-modal');
+  if (modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+  ivRunning = false;
+  if (ivFlowTimer) { clearInterval(ivFlowTimer); ivFlowTimer = null; }
+}
+
+function ivSetMode(mode) {
+  ivMode = mode;
+  document.querySelectorAll('.iv-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('iv-btn-'+mode);
+  if (btn) btn.classList.add('active');
+  if (mode === 'flow') {
+    if (ivFlowTimer) clearInterval(ivFlowTimer);
+    let fi = 0;
+    ivFlowTimer = setInterval(() => { ivFocusStage(fi % 7); fi++; }, 1600);
+  } else {
+    if (ivFlowTimer) { clearInterval(ivFlowTimer); ivFlowTimer = null; }
+  }
+  if (mode === 'full' && ivCamera) {
+    ivCamera.position.set(0, 8, 26);
+    ivCamera.lookAt(0, 0, 0);
+    ivCurrentStage = -1;
+    document.querySelectorAll('.iv-stage-tab').forEach(t => t.classList.remove('active'));
+  }
+  if (mode === 'xsection' && ivCamera) {
+    ivCamera.position.set(0, 16, 0);
+    ivCamera.lookAt(0, 0, 0);
+  }
+}
+
+function ivFocusStage(idx) {
+  ivCurrentStage = idx;
+  document.querySelectorAll('.iv-stage-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  // Pan camera to that stage
+  if (ivCamera) {
+    const targetX = -13.5 + idx * 4.5;
+    ivCamera.userData.targetX = targetX;
+    ivCamera.userData.targetY = 5;
+    ivCamera.userData.targetZ = 14;
+    ivCamera.userData.lookX = targetX;
+    ivCamera.userData.lookY = 0;
+    ivCamera.userData.panning = true;
+  }
+  // Update info overlay
+  const info = document.getElementById('iv-info-overlay');
+  if (info && stageMeta && stageMeta[idx]) {
+    const m = stageMeta[idx];
+    const num = (idx+1).toString().padStart(2,'0');
+    info.innerHTML = '<span class="iv-info-num">Stage ' + num + ' · Active</span>' +
+      '<div class="iv-info-title">' + m.part + '</div>' +
+      '<div class="iv-info-desc">' + m.desc + '</div>' +
+      '<div class="iv-info-benefit">✓ ' + m.benefit + '</div>';
+  }
+}
+
+function initInsideView() {
+  const canvas = document.getElementById('inside-view-canvas');
+  if (!canvas) return;
+
+  ivRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  ivRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  ivRenderer.setClearColor(0x020c18, 1);
+  ivRenderer.shadowMap.enabled = true;
+  ivRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  ivRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  ivRenderer.toneMappingExposure = 1.15;
+
+  const setIvSize = () => {
+    const w = canvas.clientWidth || canvas.parentElement.clientWidth;
+    const h = canvas.clientHeight || canvas.parentElement.clientHeight;
+    ivRenderer.setSize(w, h, false);
+    ivCamera.aspect = w / h;
+    ivCamera.updateProjectionMatrix();
+  };
+
+  ivScene = new THREE.Scene();
+  ivScene.fog = new THREE.FogExp2(0x020c18, 0.018);
+
+  ivCamera = new THREE.PerspectiveCamera(52, 2, 0.1, 400);
+  ivCamera.position.set(0, 8, 26);
+  ivCamera.lookAt(0, 0, 0);
+  ivCamera.userData.targetX = 0; ivCamera.userData.targetY = 8;
+  ivCamera.userData.targetZ = 26; ivCamera.userData.lookX = 0;
+  ivCamera.userData.lookY = 0; ivCamera.userData.panning = false;
+
+  // ── Lighting ──────────────────────────────────────────────
+  ivScene.add(new THREE.AmbientLight(0x1a3a5c, 0.7));
+  const keyL = new THREE.DirectionalLight(0x6fd9ff, 2.2);
+  keyL.position.set(5, 18, 10); keyL.castShadow = true;
+  keyL.shadow.mapSize.set(1024, 1024); keyL.shadow.bias = -0.001;
+  ivScene.add(keyL);
+  const rimL = new THREE.DirectionalLight(0x00ffcc, 0.9); rimL.position.set(-8,-2,-8); ivScene.add(rimL);
+  const fillL = new THREE.PointLight(0x0066ff, 60, 40, 2); fillL.position.set(-10, 5, 6); ivScene.add(fillL);
+  const topL = new THREE.PointLight(0x00d4ff, 50, 35, 2); topL.position.set(0, 12, 0); ivScene.add(topL);
+
+  // ── Ground / Grid ──────────────────────────────────────────
+  const grid = new THREE.GridHelper(60, 60, 0x004488, 0x001a33);
+  grid.position.y = -3.5; ivScene.add(grid);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 30),
+    new THREE.MeshStandardMaterial({ color:0x02080f, roughness:0.8, metalness:0.1 }));
+  ground.rotation.x = -Math.PI/2; ground.position.y = -3.51; ground.receiveShadow = true;
+  ivScene.add(ground);
+  // Ground glow strips under each stage
+  for (let i=0; i<7; i++) {
+    const x = -13.5 + i*4.5;
+    const gdisc = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5),
+      new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.04+0.01*(i%2), blending:THREE.AdditiveBlending, depthWrite:false }));
+    gdisc.rotation.x = -Math.PI/2; gdisc.position.set(x, -3.49, 0);
+    ivScene.add(gdisc);
+  }
+
+  // ── Build all 7 stage sub-scenes offset along X ────────────
+  // Re-use existing stage builder functions for consistency
+  const builders = [
+    buildStageIntake, buildStageSediment, buildStageFiltration,
+    buildStageUV, buildStageAI, buildStageStorage, buildStageDistribute
+  ];
+  ivStageGroups = []; ivStageUpdaters = [];
+  builders.forEach((fn, i) => {
+    const s = fn();
+    const x = -13.5 + i * 4.5;
+    s.group.position.set(x, 0.5, 0);
+    s.group.scale.set(0.62, 0.62, 0.62);
+    ivScene.add(s.group);
+    ivStageGroups.push(s.group);
+    ivStageUpdaters.push(s.update);
+
+    // Stage label above each unit
+    // (canvas-based label via a sprite-like approach using a PlaneGeometry with CanvasTexture)
+    const labelCanvas = document.createElement('canvas');
+    labelCanvas.width = 256; labelCanvas.height = 64;
+    const lctx = labelCanvas.getContext('2d');
+    lctx.fillStyle = 'rgba(2,12,24,0.0)';
+    lctx.fillRect(0,0,256,64);
+    lctx.font = 'bold 18px monospace';
+    lctx.fillStyle = '#38e1ff';
+    lctx.textAlign = 'center';
+    lctx.fillText('0'+(i+1)+' · '+(stageNames[i]||''), 128, 26);
+    lctx.font = '13px monospace';
+    lctx.fillStyle = '#7d99b5';
+    lctx.fillText(stageMeta[i].part, 128, 48);
+    const labelTex = new THREE.CanvasTexture(labelCanvas);
+    const labelMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.2, 0.8),
+      new THREE.MeshBasicMaterial({ map: labelTex, transparent:true, depthWrite:false, side:THREE.DoubleSide })
+    );
+    labelMesh.position.set(x, 3.4, 0);
+    ivScene.add(labelMesh);
+  });
+
+  // ── Connecting pipe segments between stages ─────────────────
+  const pipeColor = 0x336688;
+  const pipeGlowColor = 0x00d4ff;
+  const connectingPipes = [];
+  const flowTubeParticles = [];
+  for (let i=0; i<6; i++) {
+    const x1 = -13.5 + i*4.5 + 1.8;
+    const x2 = -13.5 + (i+1)*4.5 - 1.8;
+    // Main pipe
+    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, x2-x1, 12),
+      new THREE.MeshPhongMaterial({ color:pipeColor, shininess:120, specular:0x88aacc }));
+    pipe.rotation.z = Math.PI/2;
+    pipe.position.set((x1+x2)/2, -0.3, 0);
+    ivScene.add(pipe); connectingPipes.push(pipe);
+
+    // Pipe flange rings
+    [x1, x2].forEach(xp => {
+      const fl = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.04, 8, 16),
+        new THREE.MeshPhongMaterial({ color:0x557799, shininess:100 }));
+      fl.rotation.y = Math.PI/2; fl.position.set(xp, -0.3, 0);
+      ivScene.add(fl);
+    });
+
+    // Glowing flow tube (additive glow around pipe)
+    const flowGlow = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, x2-x1, 12, 1, true),
+      new THREE.MeshBasicMaterial({ color:pipeGlowColor, transparent:true, opacity:0.12, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide }));
+    flowGlow.rotation.z = Math.PI/2; flowGlow.position.set((x1+x2)/2, -0.3, 0);
+    ivScene.add(flowGlow);
+    flowGlow.userData.phase = i * 0.5;
+    connectingPipes.push(flowGlow);
+
+    // Flow particles along pipe
+    for (let p=0; p<8; p++) {
+      const fp = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6),
+        new THREE.MeshBasicMaterial({ color:0x00ffee, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false }));
+      fp.userData.x1 = x1; fp.userData.x2 = x2;
+      fp.userData.t = p/8;
+      fp.userData.speed = 0.007 + Math.random()*0.005;
+      fp.position.set(x1 + (x2-x1)*p/8, -0.3, (Math.random()-0.5)*0.12);
+      ivScene.add(fp); flowTubeParticles.push(fp);
+    }
+  }
+
+  // ── Solar panels on top of AI/Distribution stages (if configured) ──
+  const solarPanelGroup = new THREE.Group();
+  ivScene.add(solarPanelGroup);
+  // Build based on current config
+  function ivUpdateConfig() {
+    const showSolar = _ivCfgState.energy === 'solar' || _ivCfgState.energy === 'hybrid';
+    solarPanelGroup.visible = showSolar;
+    // AI stage brightness
+    if (ivStageGroups[4]) {
+      ivStageGroups[4].traverse(obj => {
+        if (obj.isMesh && obj.material && 'emissive' in obj.material) {
+          const intensity = _ivCfgState.ai === 'enterprise' ? 1.4 : _ivCfgState.ai === 'pro' ? 0.9 : 0.4;
+          if (obj.material.emissiveIntensity) obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity, intensity * 0.5);
+        }
+      });
+    }
+  }
+  // Solar panels over stage 5 (AI) and stage 6 (Storage)
+  [4, 5, 6].forEach(si => {
+    const sx = -13.5 + si*4.5;
+    for (let r=0; r<1; r++) {
+      for (let c=0; c<2; c++) {
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.04, 0.65),
+          new THREE.MeshStandardMaterial({ color:0x001133, roughness:0.2, metalness:0.8, emissive:0x001122, emissiveIntensity:0.3 }));
+        panel.position.set(sx - 0.35 + c*0.85, 2.5, -0.3+r*0.8);
+        panel.rotation.x = -0.2;
+        solarPanelGroup.add(panel);
+      }
+    }
+  });
+  ivUpdateConfig();
+
+  // ── Overall container silhouette overlay (links to configurator) ──
+  // Draw the same container outline in the background
+  const cfgCapScale = 0.85 + (_ivCfgState.capacity / 500000) * 0.55;
+  const containerOutline = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2*cfgCapScale, 2.6, 2.4),
+    new THREE.MeshBasicMaterial({ color:0x0a2850, transparent:true, opacity:0.07, wireframe:false })
+  );
+  containerOutline.position.set(0, -0.2, -3.0);
+  ivScene.add(containerOutline);
+  const containerWireframe = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2*cfgCapScale+0.1, 2.7, 2.5),
+    new THREE.MeshBasicMaterial({ color:0x38e1ff, transparent:true, opacity:0.06, wireframe:true })
+  );
+  containerWireframe.position.set(0, -0.2, -3.0);
+  ivScene.add(containerWireframe);
+
+  // ── Background particle field ──────────────────────────────
+  const bgPCount = 350;
+  const bgPPos = new Float32Array(bgPCount*3);
+  for (let i=0; i<bgPCount; i++) {
+    bgPPos[i*3] = (Math.random()-0.5)*60; bgPPos[i*3+1] = Math.random()*20-4; bgPPos[i*3+2] = (Math.random()-0.5)*30;
+  }
+  const bgPGeo = new THREE.BufferGeometry(); bgPGeo.setAttribute('position', new THREE.BufferAttribute(bgPPos, 3));
+  const bgPoints = new THREE.Points(bgPGeo, new THREE.PointsMaterial({ color:0x38e1ff, size:0.07, transparent:true, opacity:0.35, depthWrite:false, blending:THREE.AdditiveBlending }));
+  ivScene.add(bgPoints);
+
+  // ── Mouse orbit ──────────────────────────────────────────
+  let ivDragging = false, ivPrevX = 0, ivPrevY = 0;
+  let ivOrbitTheta = 0, ivOrbitPhi = 0.42, ivOrbitRadius = 26;
+  let ivAutoRotate = true, ivAutoTimer = null;
+  const IV_TARGET = new THREE.Vector3(0, 0.5, 0);
+
+  function ivUpdateCamera() {
+    const tx = ivCamera.userData.targetX || 0;
+    const ty = ivCamera.userData.targetY || 8;
+    const tz = ivCamera.userData.targetZ || 26;
+    if (ivCamera.userData.panning) {
+      ivCamera.position.x += (tx - ivCamera.position.x) * 0.08;
+      ivCamera.position.y += (ty - ivCamera.position.y) * 0.08;
+      ivCamera.position.z += (tz - ivCamera.position.z) * 0.08;
+      const lx = ivCamera.userData.lookX || 0;
+      const lookTarget = new THREE.Vector3(lx, 0, 0);
+      ivCamera.lookAt(lookTarget);
+      if (Math.abs(ivCamera.position.x - tx) < 0.05 && Math.abs(ivCamera.position.z - tz) < 0.05) {
+        ivCamera.userData.panning = false;
+      }
+      return;
+    }
+    if (ivAutoRotate) ivOrbitTheta += 0.0012;
+    const cx = IV_TARGET.x + ivOrbitRadius * Math.sin(ivOrbitPhi) * Math.sin(ivOrbitTheta);
+    const cy = IV_TARGET.y + ivOrbitRadius * Math.cos(ivOrbitPhi);
+    const cz = IV_TARGET.z + ivOrbitRadius * Math.sin(ivOrbitPhi) * Math.cos(ivOrbitTheta);
+    ivCamera.position.set(cx, cy, cz);
+    ivCamera.lookAt(IV_TARGET);
+  }
+
+  canvas.addEventListener('mousedown', e => { ivDragging = true; ivPrevX=e.clientX; ivPrevY=e.clientY; ivAutoRotate=false; clearTimeout(ivAutoTimer); });
+  window.addEventListener('mouseup', () => { ivDragging=false; ivAutoTimer=setTimeout(()=>{ ivAutoRotate=true; },3500); });
+  canvas.addEventListener('mousemove', e => {
+    if (!ivDragging) return;
+    ivOrbitTheta -= (e.clientX-ivPrevX)*0.005;
+    ivOrbitPhi = Math.max(0.18, Math.min(1.4, ivOrbitPhi+(e.clientY-ivPrevY)*0.004));
+    ivPrevX=e.clientX; ivPrevY=e.clientY;
+  });
+  canvas.addEventListener('wheel', e => { ivOrbitRadius = Math.max(10, Math.min(45, ivOrbitRadius+e.deltaY*0.04)); e.preventDefault(); }, {passive:false});
+
+  setIvSize();
+  window.addEventListener('resize', setIvSize);
+
+  ivRunning = true;
+  ivLoopStart();
+
+  function ivLoopStart() {
+    function ivLoop() {
+      if (!ivRunning) return;
+      requestAnimationFrame(ivLoop);
+      ivT += 0.015;
+
+      // Update all stage animations
+      ivStageUpdaters.forEach((u,i) => { if(ivStageGroups[i]) u(ivT); });
+
+      // Flow particles along pipes
+      flowTubeParticles.forEach(fp => {
+        fp.userData.t += fp.userData.speed;
+        if (fp.userData.t > 1) fp.userData.t = 0;
+        fp.position.x = fp.userData.x1 + (fp.userData.x2 - fp.userData.x1) * fp.userData.t;
+        fp.material.opacity = Math.sin(fp.userData.t * Math.PI) * 0.95;
+      });
+
+      // Glow pipes pulsing
+      connectingPipes.forEach((p,i) => {
+        if (p.userData.phase !== undefined) {
+          p.material.opacity = 0.08 + Math.sin(ivT*3+p.userData.phase)*0.07;
+        }
+      });
+
+      // Stage highlight on focused
+      if (ivCurrentStage >= 0 && ivCurrentStage < 7) {
+        ivStageGroups.forEach((sg, i) => {
+          const targetScale = i === ivCurrentStage ? 0.78 : 0.55;
+          sg.scale.lerp(new THREE.Vector3(targetScale,targetScale,targetScale), 0.05);
+        });
+      } else {
+        ivStageGroups.forEach(sg => {
+          sg.scale.lerp(new THREE.Vector3(0.62,0.62,0.62), 0.03);
+        });
+      }
+
+      ivUpdateCamera();
+      ivRenderer.render(ivScene, ivCamera);
+    }
+    ivLoop();
+  }
+}
+
+// _lastCfgState is updated by the configurator on every change
+// and read by openInsideView() to sync the IV badges
+
 
 /* ============================================================
    STAGE METADATA — descriptive part name + technical desc + benefit
@@ -5274,6 +6298,50 @@ function submitContact(form){
 
 </script>
 <!-- ============ PRINT-ONLY BROCHURE (PDF) ============ -->
+
+<!-- ============ INSIDE VIEW MODAL ============ -->
+<div id="inside-view-modal" class="inside-view-modal" role="dialog" aria-label="Inside View — Full Pipeline">
+  <div class="inside-view-inner">
+    <div class="iv-header">
+      <div class="iv-title">
+        <span class="dot"></span>
+        Inside View — Full 7-Stage Pipeline
+      </div>
+      <div class="iv-controls">
+        <button class="iv-btn active" id="iv-btn-full" onclick="ivSetMode('full')">Full Chain</button>
+        <button class="iv-btn" id="iv-btn-flow" onclick="ivSetMode('flow')">Flow Trace</button>
+        <button class="iv-btn" id="iv-btn-xsection" onclick="ivSetMode('xsection')">X-Section</button>
+        <button class="iv-close" onclick="closeInsideView()" title="Close" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="iv-canvas-wrap">
+      <canvas id="inside-view-canvas"></canvas>
+      <!-- Config badges -->
+      <div class="iv-cfg-badge" id="iv-cfg-badge">
+        <div class="iv-cfg-tag">Output: <span id="iv-cap-tag">50K L/d</span></div>
+        <div class="iv-cfg-tag">Energy: <span id="iv-energy-tag">Solar Hybrid</span></div>
+        <div class="iv-cfg-tag">AI: <span id="iv-ai-tag">Pro</span></div>
+      </div>
+      <!-- Stage info overlay -->
+      <div class="iv-info-overlay" id="iv-info-overlay">
+        <span class="iv-info-num">Stage 01 · Active</span>
+        <div class="iv-info-title">Intake Pipe + Coarse Screen</div>
+        <div class="iv-info-desc">Raw water is drawn through a stainless intake pipe and a coarse screen that traps leaves and debris before the treatment train.</div>
+        <div class="iv-info-benefit">✓ Removes 100% of debris &gt; 5 mm</div>
+      </div>
+    </div>
+    <div class="iv-stage-bar">
+      <div class="iv-stage-tab active" data-idx="0" onclick="ivFocusStage(0)"><span class="ts-num">01</span><span class="ts-name">Intake</span></div>
+      <div class="iv-stage-tab" data-idx="1" onclick="ivFocusStage(1)"><span class="ts-num">02</span><span class="ts-name">Sediment</span></div>
+      <div class="iv-stage-tab" data-idx="2" onclick="ivFocusStage(2)"><span class="ts-num">03</span><span class="ts-name">Filtration</span></div>
+      <div class="iv-stage-tab" data-idx="3" onclick="ivFocusStage(3)"><span class="ts-num">04</span><span class="ts-name">UV Purify</span></div>
+      <div class="iv-stage-tab" data-idx="4" onclick="ivFocusStage(4)"><span class="ts-num">05</span><span class="ts-name">AI Monitor</span></div>
+      <div class="iv-stage-tab" data-idx="5" onclick="ivFocusStage(5)"><span class="ts-num">06</span><span class="ts-name">Storage</span></div>
+      <div class="iv-stage-tab" data-idx="6" onclick="ivFocusStage(6)"><span class="ts-num">07</span><span class="ts-name">Distribute</span></div>
+    </div>
+  </div>
+</div>
+
 <div id="brochure-print" aria-hidden="true">
   <div class="bp-meta">HydroNova · Smart Water Treatment · Spec Brochure · <span data-bp-date></span></div>
   <h1>HydroNova — Clean Water, Reinvented.</h1>
